@@ -43,8 +43,8 @@ let msgOpts = {}
  * @returns {boolean}                 Returns true if logging to Papertrail
  */
 module.exports.logConfig = (ptOpts, prefix, suffix) => {
-  msgOpts.prefix = prefix || ''
-  msgOpts.suffix = suffix || ''
+  msgOpts.prefix = prefix
+  msgOpts.suffix = suffix
   ptOpts.host = ptOpts.host || process.env.PAPERTRAIL_HOST
   ptOpts.port = ptOpts.port || process.env.PAPERTRAIL_PORT
   ptOpts.hostname = ptOpts.hostname || process.env.PAPERTRAIL_HOSTNAME
@@ -73,8 +73,8 @@ module.exports.logConfig = (ptOpts, prefix, suffix) => {
  */
 module.exports.logger = async (level, message) => {
   const messageArray = Array.isArray(message) ? message : [message]
-  messageArray.unshift(msgOpts.prefix)
-  messageArray.push(msgOpts.suffix)
+  msgOpts.prefix ? messageArray.unshift(msgOpts.prefix) : undefined
+  msgOpts.suffix ? messageArray.push(msgOpts.suffix) : undefined
   const funcDetails = pkg && pkg.version ? `${pkg.name} - ${pkg.version}: ` : ''
   const logMessage = `${funcDetails}${messageArray.join(' - ')}`
   logger.log(level, logMessage)
