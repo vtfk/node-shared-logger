@@ -39,7 +39,7 @@ let msgOpts = {}
  * @param {string}  suffix            A string that will be added at the end of each log message
  * @returns {boolean}                 Returns true if logging to Papertrail
  */
-module.exports.config = (ptOpts, prefix, suffix) => {
+module.exports.logConfig = (ptOpts, prefix, suffix) => {
   msgOpts.prefix = prefix || ''
   msgOpts.suffix = suffix || ''
   ptOpts.host = ptOpts.host || process.env.PAPERTRAIL_HOST

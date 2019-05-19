@@ -1,17 +1,17 @@
 # VTFK-logger
-A simple logger for node applications using winston. Logs to console and Papertrail
+A simple logger for node applications using winston. Logs to console and Papertrail.
 
 ## Usage
 
-The Papertrail options in `config()` can be set in these enviroment variables too:
+The Papertrail options in `logConfig()` can be set in these enviroment variables too:
 ```
 PAPERTRAIL_HOST = papertrail.example.com
 PAPERTRAIL_PORT = 5050
 PAPERTRAIL_HOSTNAME = Cool-app
 ```
-If both are set the parameters in `config()` are used.
+If both are set the parameters in `logConfig()` are used.
 
-In the 'config()' function you can also specify a prefixed value (ex: UID for each event), or an suffixed value.
+In the `logConfig()` function you can also specify a prefixed value (ex: UID for each event), or an suffixed value.
 
 ### Examples
 The least amount of code to log to console or Papertrails (if options are set in enviroment variables)
@@ -21,12 +21,12 @@ const {logger} = require('vtfk-logger')
 logger('info', ['test', 'message'])
 ```
 
-Use config to display a UID infront of each message
+Use logConfig to display a UID infront of each message
 ```js
-const {config, logger} = require('vtfk-logger')
+const {logConfig, logger} = require('vtfk-logger')
 const nanoid = require('nanoid')
 
-config({}, nanoid())
+logConfig({}, nanoid())
 
 logger('info', ['test', 'message'])
 
@@ -38,9 +38,9 @@ logger('warn', ['another', 'action'])
 [ 2019-05-19 15:41:17 ] < WARN >  {NAME-OF-APP} - {VER-OF-APP}: V01k3pDpHCBkAHPyCvOOl - another - action -
 ```
 
-Configuration of Papertrail in the `config()` function
+Configuration of Papertrail in the `logConfig()` function
 ```js
-const {config, logger} = require('vtfk-logger')
+const {logConfig, logger} = require('vtfk-logger')
 
 const papertrailOptions = {
   host: 'papertrail.example.com',
@@ -48,8 +48,8 @@ const papertrailOptions = {
   hostname: 'Cool-app'
 }
 
-// Config is optional
-config(papertrailOptions, 'prefixedValue', 'suffixedValue')
+// logConfig() is optional
+logConfig(papertrailOptions, 'prefixedValue', 'suffixedValue')
 
 logger('info', ['test', 'message'])
 
