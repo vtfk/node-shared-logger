@@ -1,6 +1,9 @@
-const pkg = require('./lib/get-packagejson')()
+const packPath = require('packpath').parent()
+const { join } = require('path')
 const { createLogger, format, transports } = require('winston');
 require('winston-papertrail').Papertrail
+
+const pkg = require(join(packPath, 'package.json'))
 
 
 const logger = createLogger({

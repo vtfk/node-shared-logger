@@ -1,12 +1,13 @@
 {
-  "name": "vtfk-logger",
+  "name": "@vtfk/vtfk-logger",
   "version": "1.0.0",
   "description": "A logger for console and Papertrail",
   "main": "src/index.js",
   "files": ["src"],
   "repository": "github:vtfk/node-shared-logger",
   "bugs": "https://github.com/vtfk/node-shared-logger/issues",
-  "author": "Sherex",
+  "homepage": "https://github.com/vtfk/node-shared-logger#readme",
+  "author": "Ingar Helgesen (https://github.com/sherex)",
   "license": "MIT",
   "dependencies": {
     "packpath": "^0.1.0",
