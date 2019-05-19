@@ -39,20 +39,23 @@ let msgOpts = {}
  * @param {string}  suffix            A string that will be added at the end of each log message
  * @returns {boolean}                 Returns true if logging to Papertrail
  */
-module.exports.config = (papertrailOpts, prefix, suffix) => {
+module.exports.config = (ptOpts, prefix, suffix) => {
   msgOpts.prefix = prefix || ''
   msgOpts.suffix = suffix || ''
+  ptOpts.host = ptOpts.host || process.env.PAPERTRAIL_HOST
+  ptOpts.port = ptOpts.port || process.env.PAPERTRAIL_PORT
+  ptOpts.hostname = ptOpts.hostname || process.env.PAPERTRAIL_HOSTNAME
   
   if (
     process.env.NODE_ENV === 'production' &&
-    papertrailOpts.host &&
-    papertrailOpts.port &&
-    papertrailOpts.hostname
+    ptOpts.host &&
+    ptOpts.port &&
+    ptOpts.hostname
   ) {
     logger.add(new transports.Papertrail({
-      host: papertrailOpts.host,
-      port: papertrailOpts.port,
-      hostname: papertrailOpts.hostname,
+      host: ptOpts.host,
+      port: ptOpts.port,
+      hostname: ptOpts.hostname,
       logFormat: (level, message) => `${level.toUpperCase()} - ${message || ''}`
     }))
   }
