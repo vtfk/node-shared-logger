@@ -1,9 +1,11 @@
 {
   "name": "@vtfk/vtfk-logger",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A logger for console and Papertrail",
   "main": "src/index.js",
-  "files": ["src"],
+  "files": [
+    "src"
+  ],
   "repository": "github:vtfk/node-shared-logger",
   "bugs": "https://github.com/vtfk/node-shared-logger/issues",
   "homepage": "https://github.com/vtfk/node-shared-logger#readme",
