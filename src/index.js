@@ -1,10 +1,6 @@
+const pkg = require('./lib/get-packagejson')()
 const { createLogger, format, transports } = require('winston');
 require('winston-papertrail').Papertrail
-
-
-let pkg
-try { pkg = require(process.env.PWD + '/.package.json') } catch {}
-try { pkg = require(require.main.filename + '/package.json') } catch {}
 
 
 const logger = createLogger({
@@ -41,7 +37,7 @@ let msgOpts = {}
  * @param {string}  options.hostname  The name identifying name of the service (application / server)
  * @param {string}  prefix            A string that will be added in front of each log message (ex. UID for each run)
  * @param {string}  suffix            A string that will be added at the end of each log message
- * @returns {void}
+ * @returns {boolean}                 Returns true if logging to Papertrail
  */
 module.exports.config = (papertrailOpts, prefix, suffix) => {
   msgOpts.prefix = prefix || ''

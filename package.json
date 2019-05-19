@@ -1,14 +1,15 @@
 {
   "name": "vtfk-logger",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
+  "description": "A logger for console and Papertrail",
+  "main": "src/index.js",
+  "files": ["src"],
+  "repository": "github:vtfk/node-shared-logger",
+  "bugs": "https://github.com/vtfk/node-shared-logger/issues",
+  "author": "Sherex",
   "license": "MIT",
   "dependencies": {
+    "packpath": "^0.1.0",
     "winston": "^3.2.1",
     "winston-papertrail": "^1.0.5"
   }
