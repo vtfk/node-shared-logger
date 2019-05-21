@@ -1,6 +1,10 @@
 # VTFK-logger
 A simple logger for node applications using winston. Logs to console and Papertrail.
 
+## Installation
+
+npm install --save @vtfk/logger
+
 ## Usage
 
 The Papertrail options in `logConfig()` can be set in these enviroment variables too:
@@ -16,14 +20,14 @@ In the `logConfig()` function you can also specify a prefixed value (ex: UID for
 ### Examples
 The least amount of code to log to console or Papertrails (if options are set in enviroment variables)
 ```js
-const {logger} = require('vtfk-logger')
+const {logger} = require('@vtfk/logger')
 
 logger('info', ['test', 'message'])
 ```
 
 Use logConfig to display a UID infront of each message
 ```js
-const {logConfig, logger} = require('vtfk-logger')
+const {logConfig, logger} = require('@vtfk/logger')
 const nanoid = require('nanoid')
 
 logConfig({}, nanoid())
@@ -40,7 +44,7 @@ logger('warn', ['another', 'action'])
 
 Configuration of Papertrail in the `logConfig()` function
 ```js
-const {logConfig, logger} = require('vtfk-logger')
+const {logConfig, logger} = require('@vtfk/logger')
 
 const papertrailOptions = {
   host: 'papertrail.example.com',
