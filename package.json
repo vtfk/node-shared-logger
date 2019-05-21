@@ -1,6 +1,6 @@
 {
   "name": "@vtfk/logger",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A logger for console and Papertrail",
   "main": "src/index.js",
   "files": [
@@ -12,8 +12,8 @@
   "author": "Ingar Helgesen (https://github.com/sherex)",
   "license": "MIT",
   "dependencies": {
-    "packpath": "^0.1.0",
-    "winston": "^3.2.1",
-    "winston-papertrail": "^1.0.5"
+    "packpath": "0.1.0",
+    "winston": "3.2.1",
+    "winston-papertrail": "1.0.5"
   }
 }
