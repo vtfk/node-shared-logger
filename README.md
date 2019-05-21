@@ -3,7 +3,7 @@ A simple logger for node applications using winston. Logs to console and Papertr
 
 ## Installation
 
-npm install --save @vtfk/logger
+`npm install --save @vtfk/logger`
 
 ## Usage
 
