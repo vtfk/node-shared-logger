@@ -1,10 +1,9 @@
 const packPath = require('packpath').parent()
 const { join } = require('path')
-const { createLogger, format, transports } = require('winston');
-require('winston-papertrail').Papertrail
+const { createLogger, format, transports } = require('winston')
+require('winston-papertrail').Papertrail // eslint-disable-line no-unused-expressions
 
 const pkg = require(join(packPath, 'package.json'))
-
 
 const logger = createLogger({
   level: 'info',
@@ -17,7 +16,7 @@ const logger = createLogger({
     format.json()
   ),
   defaultMeta: { service: 'your-service-name' }
-});
+})
 
 if (process.env.NODE_ENV !== 'production') {
   logger.add(new transports.Console({
@@ -25,7 +24,7 @@ if (process.env.NODE_ENV !== 'production') {
       format.timestamp(),
       format.printf(options => `[ ${options.timestamp} ] < ${options.level.toUpperCase()} >  ${(options.message ? options.message : '')}`)
     )
-  }));
+  }))
 }
 
 // Store the options after configuration
@@ -48,7 +47,7 @@ module.exports.logConfig = (ptOpts, prefix, suffix) => {
   ptOpts.host = ptOpts.host || process.env.PAPERTRAIL_HOST
   ptOpts.port = ptOpts.port || process.env.PAPERTRAIL_PORT
   ptOpts.hostname = ptOpts.hostname || process.env.PAPERTRAIL_HOSTNAME
-  
+
   if (
     process.env.NODE_ENV === 'production' &&
     ptOpts.host &&
@@ -73,11 +72,9 @@ module.exports.logConfig = (ptOpts, prefix, suffix) => {
  */
 module.exports.logger = async (level, message) => {
   const messageArray = Array.isArray(message) ? message : [message]
-  msgOpts.prefix ? messageArray.unshift(msgOpts.prefix) : undefined
-  msgOpts.suffix ? messageArray.push(msgOpts.suffix) : undefined
+  msgOpts.prefix && messageArray.unshift(msgOpts.prefix)
+  msgOpts.suffix && messageArray.push(msgOpts.suffix)
   const funcDetails = pkg && pkg.version ? `${pkg.name} - ${pkg.version}: ` : ''
   const logMessage = `${funcDetails}${messageArray.join(' - ')}`
   logger.log(level, logMessage)
 }
-
-
