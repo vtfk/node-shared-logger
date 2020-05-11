@@ -68,7 +68,6 @@ function logConfig (options = {}) {
  * @returns {void}
  */
 function logger (level, message) {
-  // TODO: Create modules
   const { fDate, fTime } = getDateTime()
   const messageArray = Array.isArray(message) ? message : [message]
   let syslogSeverity = logLevelMapper(level)
@@ -89,7 +88,6 @@ function logger (level, message) {
 
   if (loggerOptions.enabled) loggerOptions.remoteLogger.log(remoteLogMessage, { severity: syslogSeverity })
 
-  // TODO: Option to pass in custom logger? (Ex. "context.log()" from Azure Functions)
   loggerOptions.localLogger(localLogMessage)
 }
 
