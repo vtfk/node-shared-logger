@@ -13,7 +13,6 @@
   "license": "MIT",
   "dependencies": {
     "packpath": "0.1.0",
-    "winston": "3.2.1",
-    "winston-papertrail": "1.0.5"
+    "syslog-client": "^1.1.1"
   }
 }

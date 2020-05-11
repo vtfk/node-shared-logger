@@ -1,5 +1,6 @@
 # VTFK-logger
-A simple logger for node applications using winston. Logs to console and Papertrail.
+A simple syslog logger for node applications. Logs to console and remote syslog aggregator.  
+Only tested with Papertrail.
 
 ## Installation
 
@@ -7,30 +8,51 @@ A simple logger for node applications using winston. Logs to console and Papertr
 
 ## Usage
 
-The Papertrail options in `logConfig()` can be set in these enviroment variables too:
+## Config
+All options are optional. Logging to a remote syslog aggregator can be configured in logConfig() or as env variables.
+```
+const options = {
+  remote: {                     // Options for remote logging. If undefined; disables remote logging
+    onlyInProd: true,           // If true; only log to remote aggregator when NODE_ENV === 'production'
+    host: '',                   // Hostname for the remote aggregator
+    port: '',                   // Port for the remote aggregator
+    serviceHostname: '',        // The identificator of this service
+    serviceAppname: 'default:'  // The identificator of this application (defaults to "default:" for consistency with Winston)
+  },
+  prefix: '',                   // A string that will be added in front of each log message (ex. UID for each run)
+  suffix: '',                   // A string that will be added at the end of each log message
+  localLogger: console.log      // Replace the local logger with a custom function (Default: console.log)
+}
+
+logConfig(options)
+```
+
+
+### ENV Variables
 ```
 PAPERTRAIL_HOST = papertrail.example.com
 PAPERTRAIL_PORT = 5050
 PAPERTRAIL_HOSTNAME = Cool-app
 ```
-If both are set the parameters in `logConfig()` are used.
-
-In the `logConfig()` function you can also specify a prefixed value (ex: UID for each event), or an suffixed value.
+`logConfig()` options take priority.
 
 ### Examples
-The least amount of code to log to console or Papertrails (if options are set in enviroment variables)
+#### Ex. 1
+The least amount of code to log to console or a remote syslog aggregator (if options are set in enviroment variables)
 ```js
 const {logger} = require('@vtfk/logger')
 
 logger('info', ['test', 'message'])
 ```
-
+#### Ex. 2
 Use logConfig to display a UID infront of each message
 ```js
 const {logConfig, logger} = require('@vtfk/logger')
 const nanoid = require('nanoid')
 
-logConfig({}, nanoid())
+logConfig({
+  prefix: nanoid()
+})
 
 logger('info', ['test', 'message'])
 
@@ -41,19 +63,22 @@ logger('warn', ['another', 'action'])
 [ 2019-05-19 15:41:17 ] < INFO >  {NAME-OF-APP} - {VER-OF-APP}: V01k3pDpHCBkAHPyCvOOl - test - message
 [ 2019-05-19 15:41:17 ] < WARN >  {NAME-OF-APP} - {VER-OF-APP}: V01k3pDpHCBkAHPyCvOOl - another - action
 ```
-
-Configuration of Papertrail in the `logConfig()` function
+#### Ex. 3
+Configuration of remote options in the `logConfig()` function
 ```js
 const {logConfig, logger} = require('@vtfk/logger')
 
-const papertrailOptions = {
-  host: 'papertrail.example.com',
-  port: '5050',
-  hostname: 'Cool-app'
-}
-
 // logConfig() is optional
-logConfig(papertrailOptions, 'prefixedValue', 'suffixedValue')
+logConfig({
+  remote: {
+    onlyInProd: true,
+    host: 'papertrail.example.com',
+    port: 5050,
+    serviceHostname: 'my-server-name'
+  }
+  prefix: 'prefixedValue',
+  suffix: 'suffixedValue'
+})
 
 logger('info', ['test', 'message'])
 
@@ -67,9 +92,7 @@ logger('error', ['Error in app', error])
 ```
 
 ## Logging
-It will only log to Papertrail if in a production enviroment (NODE_ENV === 'production'), and the Papertrails host, port and hostname is set.
-
-It will log to console when not in a production enviroment.
+Remote logging is only enabled in a production enviroment (`NODE_ENV === 'production'`), unless `options.remote.onlyInProd === false`.
 
 # License
 
