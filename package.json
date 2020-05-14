@@ -4,8 +4,9 @@
   "description": "A logger for console and Papertrail",
   "main": "src/index.js",
   "scripts": {
-    "test": "jest --coverage",
-    "test:watch": "jest --coverage --watch"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "files": [
     "src"
@@ -20,6 +21,13 @@
     "syslog-client": "^1.1.1"
   },
   "devDependencies": {
-    "jest": "^26.0.1"
+    "jest": "^26.0.1",
+    "jest-extended": "^0.11.5"
+  },
+  "jest": {
+    "setupFilesAfterEnv": [
+      "jest-extended"
+    ],
+    "collectCoverageFrom": ["src/**/*.js"]
   }
 }
