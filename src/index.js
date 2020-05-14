@@ -1,14 +1,29 @@
-const packPath = require('packpath').parent()
-const { join } = require('path')
 const syslog = require('syslog-client')
 const logLevelMapper = require('./lib/log-level-mapper')
-const getDateTime = require('./lib/get-date-time')
-
-const pkg = require(join(packPath, 'package.json'))
+const formatDateTime = require('./lib/format-date-time')
+const { pkg } = require('./lib/get-package-json')
+const logConfigFactory = require('./lib/log-config-factory')
+const loggerFactory = require('./lib/logger-factory')
+const inProduction = require('./lib/in-production')
 
 // Store the options after configuration
 const loggerOptions = {
   localLogger: console.log
+}
+
+// Dependencies for the imported factory functions
+const logConfigDeps = {
+  syslog,
+  loggerOptions,
+  inProduction
+}
+
+const loggerDeps = {
+  formatDateTime,
+  logLevelMapper,
+  loggerOptions,
+  pkg,
+  inProduction
 }
 
 /**
@@ -26,39 +41,7 @@ const loggerOptions = {
  * @param {function}  [options.localLogger=console.log]   Replace the local logger with a custom function (Default: console.log)
  * @returns {void}
  */
-function logConfig (options = {}) {
-  if (
-    options && typeof options === 'object' &&
-    options.remote && typeof options.remote === 'object'
-  ) {
-    options.remote.host = options.remote.host || process.env.PAPERTRAIL_HOST
-    options.remote.port = options.remote.port || process.env.PAPERTRAIL_PORT
-    options.remote.serviceHostname = options.remote.serviceHostname || process.env.PAPERTRAIL_HOSTNAME
-    options.remote.serviceAppname = options.remote.serviceAppname || process.env.PAPERTRAIL_APPNAME || 'default:'
-
-    loggerOptions.remoteLogger = syslog.createClient(options.remote.host, {
-      port: options.remote.port,
-      syslogHostname: options.remote.hostname,
-      appName: options.remote.serviceAppname,
-      transport: syslog.Transport.Udp,
-      rfc3164: false // Use RFC5424
-    })
-
-    // onlyInProd defaults to true
-    options.remote.onlyInProd = options.remote.onlyInProd === undefined
-
-    if (!(process.env.NODE_ENV !== 'production' && options.remote.onlyInProd)) {
-      loggerOptions.enabled = true
-    }
-  }
-
-  loggerOptions.prefix = typeof options.prefix === 'string' ? options.prefix : undefined
-  loggerOptions.suffix = typeof options.suffix === 'string' ? options.suffix : undefined
-
-  if (typeof options.localLogger === 'function') {
-    loggerOptions.localLogger = options.localLogger
-  }
-}
+function logConfig (options = {}) { return logConfigFactory(options, logConfigDeps) }
 
 /**
  * Logger function
@@ -67,29 +50,7 @@ function logConfig (options = {}) {
  * @param {array<string>}   message   An array of strings which is joined by a hyphen in the log message
  * @returns {void}
  */
-function logger (level, message) {
-  const { fDate, fTime } = getDateTime()
-  const messageArray = Array.isArray(message) ? message : [message]
-  let syslogSeverity = logLevelMapper(level)
-
-  if (syslogSeverity === undefined) {
-    logger('error', ['Unknown log level', level, 'using \'warn\' level instead'])
-    level = 'warn'
-    syslogSeverity = logLevelMapper(level)
-  }
-
-  loggerOptions.prefix && messageArray.unshift(loggerOptions.prefix)
-  loggerOptions.suffix && messageArray.push(loggerOptions.suffix)
-
-  const funcDetails = pkg && pkg.version ? `${pkg.name} - ${pkg.version}` : ''
-  const logMessage = `${funcDetails}: ${messageArray.join(' - ')}`
-  const remoteLogMessage = `${level.toUpperCase()} - ${logMessage}`
-  const localLogMessage = `[ ${fDate} ${fTime} ] < ${level.toUpperCase()} >  ${logMessage}`
-
-  if (loggerOptions.enabled) loggerOptions.remoteLogger.log(remoteLogMessage, { severity: syslogSeverity })
-
-  loggerOptions.localLogger(localLogMessage)
-}
+function logger (level, message) { return loggerFactory(level, message, loggerDeps) }
 
 module.exports = {
   logConfig,
