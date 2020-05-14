@@ -3,6 +3,10 @@
   "version": "2.0.0",
   "description": "A logger for console and Papertrail",
   "main": "src/index.js",
+  "scripts": {
+    "test": "jest --coverage",
+    "test:watch": "jest --coverage --watch"
+  },
   "files": [
     "src"
   ],
@@ -14,5 +18,8 @@
   "dependencies": {
     "packpath": "0.1.0",
     "syslog-client": "^1.1.1"
+  },
+  "devDependencies": {
+    "jest": "^26.0.1"
   }
 }
