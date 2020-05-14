@@ -8,8 +8,10 @@ const levelMapper = {
 }
 
 module.exports = (level) => {
-  level = level.toLowerCase()
-  if (levelMapper[level] !== undefined) {
+  try {
+    level = level.toLowerCase()
     return levelMapper[level]
+  } catch (error) {
+    return undefined
   }
 }

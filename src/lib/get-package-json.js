@@ -18,9 +18,7 @@ function _getPkgFactory (
   }
 }
 
-function getPkg () { return _getPkgFactory(getPkgDeps) }
-
 module.exports = {
-  pkg: getPkg(),
+  pkg: _getPkgFactory(getPkgDeps),
   _getPkgFactory
 }

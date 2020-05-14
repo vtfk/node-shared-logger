@@ -15,7 +15,7 @@ function _logConfigFactory (options = {},
 
     loggerOptions.remoteLogger = syslog.createClient(options.remote.host, {
       port: options.remote.port,
-      syslogHostname: options.remote.hostname,
+      syslogHostname: options.remote.serviceHostname,
       appName: options.remote.serviceAppname,
       transport: syslog.Transport.Udp,
       rfc3164: false // Use RFC5424

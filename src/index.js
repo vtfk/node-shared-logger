@@ -4,7 +4,7 @@ const formatDateTime = require('./lib/format-date-time')
 const { pkg } = require('./lib/get-package-json')
 const logConfigFactory = require('./lib/log-config-factory')
 const loggerFactory = require('./lib/logger-factory')
-const inProduction = require('./lib/in-production')
+const { inProduction } = require('./lib/in-production')
 
 // Store the options after configuration
 const loggerOptions = {
