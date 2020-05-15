@@ -1,4 +1,3 @@
-/* eslint-env jest */
 const levelMapper = require('./log-level-mapper')
 
 describe('Checking if it returns correct value based on level', () => {

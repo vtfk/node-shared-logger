@@ -1,4 +1,3 @@
-/* eslint-env jest */
 const { _inProductionFactory } = require('./in-production')
 
 describe('Checking if it returns correct value', () => {

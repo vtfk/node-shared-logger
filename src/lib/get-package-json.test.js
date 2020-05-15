@@ -1,4 +1,3 @@
-/* eslint-env jest */
 const { pkg, _getPkgFactory } = require('./get-package-json')
 
 describe('Testing root package.json path', () => {

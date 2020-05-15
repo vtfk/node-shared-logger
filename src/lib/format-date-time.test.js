@@ -1,4 +1,3 @@
-/* eslint-env jest */
 const formatDateTime = require('./format-date-time')
 
 describe('Date & time format testing', () => {

@@ -1,4 +1,3 @@
-/* eslint-env jest */
 const logConfigFactory = require('./log-config-factory')
 
 describe('Checking client creation', () => {
