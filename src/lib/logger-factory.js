@@ -21,7 +21,7 @@ function _loggerFactory (level, message,
   } else if (loggerOptions.prefix && !inProduction) throw Error('logConfig({ --> prefix: ... <-- }) has to be of type string!')
 
   if (typeof loggerOptions.suffix === 'string') {
-    messageArray.unshift(loggerOptions.suffix)
+    messageArray.push(loggerOptions.suffix)
   } else if (loggerOptions.suffix && !inProduction) throw Error('logConfig({ --> suffix: ... <-- }) has to be of type string!')
 
   const funcDetails = pkg && pkg.version ? `${pkg.name} - ${pkg.version}: ` : ''

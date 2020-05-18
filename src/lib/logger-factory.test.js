@@ -1,5 +1,14 @@
 const loggerFactory = require('./logger-factory')
 
+function matchLogMessage (message) {
+  const logMessageMatcher = /^\[ (?<dateTime>\d{1,2}\/\d{1,2}\/\d{4} \d{2}:\d{2}:\d{2}) \] < (?<level>\w{1,10}) > ([^:]*: |)(?<message>.*$)/
+  const match = message.match(logMessageMatcher)
+  return {
+    fullMatch: match[0],
+    ...match.groups
+  }
+}
+
 function createLogger (fakeDeps) {
   const mergedFakeDeps = {
     formatDateTime: jest.fn((date) => ({ fDate: '00/0/0000', fTime: '00:00:00' })),
@@ -109,6 +118,46 @@ describe('Prefix & suffix testing', () => {
     expect(localLogger).toContain('testSuffix')
   })
 
+  it('checks if suffix is at the end of the message', () => {
+    const { logger, mergedFakeDeps } = createLogger({
+      loggerOptions: {
+        localLogger: jest.fn((message) => {}),
+        suffix: 'testSuffix'
+      }
+    })
+    logger('info', 'message')
+    const localLogger = mergedFakeDeps.loggerOptions.localLogger.mock.calls[0][0]
+
+    expect(localLogger).toEndWith('message - testSuffix')
+  })
+
+  it('checks if prefix is at the start of the message', () => {
+    const { logger, mergedFakeDeps } = createLogger({
+      loggerOptions: {
+        localLogger: jest.fn((message) => {}),
+        prefix: 'testPrefix'
+      }
+    })
+    logger('info', 'message')
+    const localLogger = mergedFakeDeps.loggerOptions.localLogger.mock.calls[0][0]
+
+    expect(localLogger).toEndWith('testPrefix - message')
+  })
+
+  it('checks that format is \'prefix - message - suffix\'', () => {
+    const { logger, mergedFakeDeps } = createLogger({
+      loggerOptions: {
+        localLogger: jest.fn((message) => {}),
+        prefix: 'testPrefix',
+        suffix: 'testSuffix'
+      }
+    })
+    logger('info', 'testMessage')
+    const localLogger = mergedFakeDeps.loggerOptions.localLogger.mock.calls[0][0]
+
+    expect(localLogger).toEndWith('testPrefix - testMessage - testSuffix')
+  })
+
   const objectArrayIntValues = [{ a: 123 }, [123, '456'], 123]
   objectArrayIntValues.forEach(value => {
     it(`throws if prefix is ${Array.isArray(value) ? 'array' : typeof value}`, () => {
@@ -132,6 +181,49 @@ describe('Prefix & suffix testing', () => {
       })
       expect(() => logger('info', 'message')).toThrow()
     })
+  })
+})
+
+describe('Message level', () => {
+  it('checks that level info is added and in upper case', () => {
+    const { logger, mergedFakeDeps } = createLogger()
+
+    logger('info', 'testMessage')
+    const localLogger = mergedFakeDeps.loggerOptions.localLogger.mock.calls[0][0]
+
+    expect(matchLogMessage(localLogger).level).toBe('INFO')
+  })
+
+  it('checks that level error is added and in upper case', () => {
+    const { logger, mergedFakeDeps } = createLogger()
+
+    logger('error', 'testMessage')
+    const localLogger = mergedFakeDeps.loggerOptions.localLogger.mock.calls[0][0]
+
+    expect(matchLogMessage(localLogger).level).toBe('ERROR')
+  })
+})
+
+describe('Date and time', () => {
+  it('adds the date and time at correct location', () => {
+    const { logger, mergedFakeDeps } = createLogger({
+      formatDateTime: jest.fn((date) => ({ fDate: '00/0/0000', fTime: '00:00:00' }))
+    })
+
+    logger('info', 'testMessage')
+    const localLogger = mergedFakeDeps.loggerOptions.localLogger.mock.calls[0][0]
+
+    expect(matchLogMessage(localLogger).dateTime).toBe('00/0/0000 00:00:00')
+  })
+  it('Checks that it adds the date and time at correct location, test 2', () => {
+    const { logger, mergedFakeDeps } = createLogger({
+      formatDateTime: jest.fn((date) => ({ fDate: '12/3/4567', fTime: '12:34:56' }))
+    })
+
+    logger('info', 'testMessage')
+    const localLogger = mergedFakeDeps.loggerOptions.localLogger.mock.calls[0][0]
+
+    expect(matchLogMessage(localLogger).dateTime).toBe('12/3/4567 12:34:56')
   })
 })
 
