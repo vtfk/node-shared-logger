@@ -1,6 +1,5 @@
-module.exports = () => {
-  const time = new Date()
-  const fDate = `${time.getDate()}/${time.getMonth()}/${time.getFullYear()}`
+module.exports = (time) => {
+  const fDate = `${time.getDate()}/${time.getMonth() + 1}/${time.getFullYear()}`
   const fTime = `${addZero(time.getHours())}:${addZero(time.getMinutes())}:${addZero(time.getSeconds())}`
 
   return {
