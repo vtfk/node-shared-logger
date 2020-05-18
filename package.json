@@ -1,8 +1,15 @@
 {
   "name": "@vtfk/logger",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "A logger for console and Papertrail",
   "main": "src/index.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "coveralls": "jest --coverage && coveralls < coverage/lcov.info",
+    "lint": "standard ./src/**/*.js"
+  },
   "files": [
     "src"
   ],
@@ -14,5 +21,24 @@
   "dependencies": {
     "packpath": "0.1.0",
     "syslog-client": "^1.1.1"
+  },
+  "devDependencies": {
+    "coveralls": "^3.1.0",
+    "jest": "^26.0.1",
+    "jest-extended": "^0.11.5",
+    "standard": "^14.3.4"
+  },
+  "jest": {
+    "setupFilesAfterEnv": [
+      "jest-extended"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.js"
+    ]
+  },
+  "standard": {
+    "env": [
+      "jest"
+    ]
   }
 }
