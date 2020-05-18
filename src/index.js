@@ -15,7 +15,7 @@ const loggerOptions = {
 const logConfigDeps = {
   syslog,
   loggerOptions,
-  inProduction
+  envVariables: process.env
 }
 
 const loggerDeps = {

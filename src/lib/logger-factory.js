@@ -7,24 +7,31 @@ function _loggerFactory (level, message,
     inProduction
   }) {
   const { fDate, fTime } = formatDateTime(new Date())
-  const messageArray = Array.isArray(message) ? message : [message]
+  let messageArray = Array.isArray(message) ? message : [message]
   let syslogSeverity = logLevelMapper(level)
 
   if (syslogSeverity === undefined) {
-    if (inProduction) throw Error(`Unknown log level '${level}'`)
+    if (!inProduction) throw Error(`Unknown log level '${level}'`)
     level = 'warn'
     syslogSeverity = logLevelMapper(level)
   }
 
-  loggerOptions.prefix && messageArray.unshift(loggerOptions.prefix)
-  loggerOptions.suffix && messageArray.push(loggerOptions.suffix)
+  if (typeof loggerOptions.prefix === 'string') {
+    messageArray.unshift(loggerOptions.prefix)
+  } else if (loggerOptions.prefix && !inProduction) throw Error('logConfig({ --> prefix: ... <-- }) has to be of type string!')
+
+  if (typeof loggerOptions.suffix === 'string') {
+    messageArray.unshift(loggerOptions.suffix)
+  } else if (loggerOptions.suffix && !inProduction) throw Error('logConfig({ --> suffix: ... <-- }) has to be of type string!')
 
   const funcDetails = pkg && pkg.version ? `${pkg.name} - ${pkg.version}: ` : ''
+  messageArray = messageArray.map(msg => typeof msg === 'object' ? JSON.stringify(msg) : msg)
   const logMessage = `${funcDetails}${messageArray.join(' - ')}`
   const remoteLogMessage = `${level.toUpperCase()} - ${logMessage}`
   const localLogMessage = `[ ${fDate} ${fTime} ] < ${level.toUpperCase()} > ${logMessage}`
 
-  if (loggerOptions.enabled) loggerOptions.remoteLogger.log(remoteLogMessage, { severity: syslogSeverity })
+  const shouldLogToRemote = loggerOptions.logToRemote && !(!inProduction && loggerOptions.onlyInProd)
+  if (shouldLogToRemote) loggerOptions.remoteLogger.log(remoteLogMessage, { severity: syslogSeverity })
 
   loggerOptions.localLogger(localLogMessage)
 }

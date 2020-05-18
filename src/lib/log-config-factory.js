@@ -2,16 +2,28 @@ function _logConfigFactory (options = {},
   {
     syslog,
     loggerOptions,
-    inProduction
+    envVariables
   }) {
+  if (
+    (!options || !options.remote) &&
+    envVariables.PAPERTRAIL_HOST &&
+    envVariables.PAPERTRAIL_PORT &&
+    envVariables.PAPERTRAIL_HOSTNAME
+  ) {
+    options.remote = {
+      host: envVariables.PAPERTRAIL_HOST,
+      port: envVariables.PAPERTRAIL_PORT,
+      serviceHostname: envVariables.PAPERTRAIL_HOSTNAME
+    }
+  }
   if (
     options && typeof options === 'object' &&
     options.remote && typeof options.remote === 'object'
   ) {
-    options.remote.host = options.remote.host || process.env.PAPERTRAIL_HOST
-    options.remote.port = options.remote.port || process.env.PAPERTRAIL_PORT
-    options.remote.serviceHostname = options.remote.serviceHostname || process.env.PAPERTRAIL_HOSTNAME
-    options.remote.serviceAppname = options.remote.serviceAppname || process.env.PAPERTRAIL_APPNAME || 'default:'
+    options.remote.host = options.remote.host || envVariables.PAPERTRAIL_HOST
+    options.remote.port = options.remote.port || envVariables.PAPERTRAIL_PORT
+    options.remote.serviceHostname = options.remote.serviceHostname || envVariables.PAPERTRAIL_HOSTNAME
+    options.remote.serviceAppname = options.remote.serviceAppname || envVariables.PAPERTRAIL_APPNAME || 'default:'
 
     loggerOptions.remoteLogger = syslog.createClient(options.remote.host, {
       port: options.remote.port,
@@ -24,8 +36,12 @@ function _logConfigFactory (options = {},
     // onlyInProd defaults to true
     options.remote.onlyInProd = options.remote.onlyInProd === undefined
 
-    if (!(inProduction && options.remote.onlyInProd)) {
-      loggerOptions.enabled = true
+    if (
+      typeof options.remote.host === 'string' &&
+      typeof options.remote.port === 'string' &&
+      typeof options.remote.serviceHostname === 'string'
+    ) {
+      loggerOptions.logToRemote = true
     }
   }
 
