@@ -30,7 +30,7 @@ function _loggerFactory (level, message,
   const remoteLogMessage = `${level.toUpperCase()} - ${logMessage}`
   const localLogMessage = `[ ${fDate} ${fTime} ] < ${level.toUpperCase()} > ${logMessage}`
 
-  const shouldLogToRemote = loggerOptions.logToRemote && !(!inProduction && loggerOptions.onlyInProd)
+  const shouldLogToRemote = (loggerOptions.logToRemote && !(!inProduction && loggerOptions.onlyInProd)) || false
   if (shouldLogToRemote) loggerOptions.remoteLogger.log(remoteLogMessage, { severity: syslogSeverity })
 
   loggerOptions.localLogger(localLogMessage)

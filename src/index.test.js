@@ -1,4 +1,4 @@
-const index = require('./index')
+let index = require('./index')
 
 describe('Checking for errors in index', () => {
   it('returns an object', () => {
@@ -21,5 +21,29 @@ describe('Testing returned functions', () => {
 
   it('calls logger() without an error', () => {
     expect(() => index.logger('info', ['test', 'message'])).not.toThrow()
+  })
+
+  it('does not log to remote with no config', () => {
+    expect(index.logger('info', ['test', 'message'])).toBe(false)
+  })
+
+  it('logs to remote with only env variables', () => {
+    const oldEnvs = process.env
+    process.env = {
+      ...process.env,
+      PAPERTRAIL_HOST: 'env.example.com',
+      PAPERTRAIL_PORT: '8081',
+      PAPERTRAIL_HOSTNAME: 'envApp',
+      PAPERTRAIL_APPNAME: 'testApp'
+    }
+    // Make sure it uses these env variables
+    jest.resetModules()
+    index = require('./index')
+
+    expect(index.logger('info', ['test', 'message'])).toBe(true)
+    process.env = oldEnvs
+
+    jest.resetModules()
+    index = require('./index')
   })
 })

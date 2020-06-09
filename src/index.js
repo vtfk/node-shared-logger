@@ -52,6 +52,9 @@ function logConfig (options = {}) { return logConfigFactory(options, logConfigDe
  */
 function logger (level, message) { return loggerFactory(level, message, loggerDeps) }
 
+// Run logConfig just in case only env variables are used
+logConfig()
+
 module.exports = {
   logConfig,
   logger
