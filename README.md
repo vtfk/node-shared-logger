@@ -1,4 +1,8 @@
 # VTFK-logger
+
+[![Build Status](https://travis-ci.com/vtfk/node-shared-logger.svg?branch=master)](https://travis-ci.com/vtfk/node-shared-logger)
+[![Coverage Status](https://coveralls.io/repos/github/vtfk/node-shared-logger/badge.svg?branch=master)](https://coveralls.io/github/vtfk/node-shared-logger?branch=master)
+
 A simple syslog logger for node applications. Logs to console and remote syslog aggregator.  
 Only tested with Papertrail.
 
