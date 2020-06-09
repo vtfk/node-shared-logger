@@ -262,3 +262,27 @@ describe('Should it log to remote?', () => {
     })
   })
 })
+
+describe('Logging to remote', () => {
+  [
+    { logToRemote: true, shouldLog: true },
+    { logToRemote: false, shouldLog: false }
+  ].forEach(testCase => {
+    it(`should return ${testCase.shouldLog} when ${testCase.shouldLog ? '' : 'not '}logging to remote`, () => {
+      const { logger } = createLogger({
+        inProduction: true,
+        loggerOptions: {
+          localLogger: () => {},
+          remoteLogger: {
+            log: () => {}
+          },
+          logToRemote: testCase.logToRemote
+        }
+      })
+
+      const loggedToRemote = logger('info', 'msg')
+
+      expect(loggedToRemote).toBe(testCase.shouldLog)
+    })
+  })
+})

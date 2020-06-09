@@ -34,6 +34,8 @@ function _loggerFactory (level, message,
   if (shouldLogToRemote) loggerOptions.remoteLogger.log(remoteLogMessage, { severity: syslogSeverity })
 
   loggerOptions.localLogger(localLogMessage)
+
+  return shouldLogToRemote
 }
 
 module.exports = _loggerFactory
