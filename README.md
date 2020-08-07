@@ -1,7 +1,8 @@
 # VTFK-logger
 
-[![Travis build](https://img.shields.io/travis/com/vtfk/node-shared-logger/master)](https://travis-ci.com/vtfk/node-shared-logger)
+[![GitHub Workflow Tests](https://img.shields.io/github/workflow/status/vtfk/node-shared-logger/Tests/master?label=Tests)](https://github.com/vtfk/node-shared-logger/actions?query=workflow%3ATests)
 [![Coveralls coverage](https://img.shields.io/coveralls/github/vtfk/node-shared-logger/master)](https://coveralls.io/github/vtfk/node-shared-logger?branch=master)
+[![GitHub Workflow Publish NPM](https://img.shields.io/github/workflow/status/vtfk/node-shared-logger/Publish/master?label=Publish)](https://github.com/vtfk/node-shared-logger/actions?query=workflow%3APublish)
 [![NPM version](https://img.shields.io/npm/v/@vtfk/logger)](https://www.npmjs.com/package/@vtfk/logger)
 [![GitHub release](https://img.shields.io/github/v/release/vtfk/node-shared-logger?label=GitHub&sort=semver)](https://github.com/vtfk/node-shared-logger)
 
