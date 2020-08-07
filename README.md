@@ -1,7 +1,9 @@
 # VTFK-logger
 
-[![Build Status](https://travis-ci.com/vtfk/node-shared-logger.svg?branch=master)](https://travis-ci.com/vtfk/node-shared-logger)
-[![Coverage Status](https://coveralls.io/repos/github/vtfk/node-shared-logger/badge.svg?branch=master)](https://coveralls.io/github/vtfk/node-shared-logger?branch=master)
+[![Travis build](https://img.shields.io/travis/com/vtfk/node-shared-logger/master)](https://travis-ci.com/vtfk/node-shared-logger)
+[![Coveralls coverage](https://img.shields.io/coveralls/github/vtfk/node-shared-logger/master)](https://coveralls.io/github/vtfk/node-shared-logger?branch=master)
+[![NPM version](https://img.shields.io/npm/v/@vtfk/logger)](https://www.npmjs.com/package/@vtfk/logger)
+[![GitHub release](https://img.shields.io/github/v/release/vtfk/node-shared-logger?label=GitHub&sort=semver)](https://github.com/vtfk/node-shared-logger)
 
 A simple syslog logger for node applications. Logs to console and remote syslog aggregator.  
 Only tested with Papertrail.
