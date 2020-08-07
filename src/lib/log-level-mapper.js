@@ -7,10 +7,18 @@ const levelMapper = {
   silly: 5
 }
 
+const longestLevelString = Object.keys(levelMapper).reduce((prev, curr) => curr.length > prev.length ? curr : prev)
+
 module.exports = (level) => {
   try {
-    level = level.toLowerCase()
-    return levelMapper[level]
+    const severity = levelMapper[level.toLowerCase()]
+    if (typeof severity === 'number') {
+      return {
+        severity,
+        level: level.toUpperCase(),
+        padding: ' '.repeat(longestLevelString.length - level.length)
+      }
+    }
   } catch (error) {
     return undefined
   }
