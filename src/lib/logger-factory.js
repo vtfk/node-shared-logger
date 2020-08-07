@@ -8,12 +8,12 @@ function _loggerFactory (level, message,
   }) {
   const { fDate, fTime } = formatDateTime(new Date())
   let messageArray = Array.isArray(message) ? message : [message]
-  let syslogSeverity = logLevelMapper(level)
+  let logLevel = logLevelMapper(level)
 
-  if (syslogSeverity === undefined) {
+  if (logLevel === undefined) {
     if (!inProduction) throw Error(`Unknown log level '${level}'`)
     level = 'warn'
-    syslogSeverity = logLevelMapper(level)
+    logLevel = logLevelMapper(level)
   }
 
   if (typeof loggerOptions.prefix === 'string') {
@@ -27,11 +27,11 @@ function _loggerFactory (level, message,
   const funcDetails = pkg && pkg.version ? `${pkg.name} - ${pkg.version}: ` : ''
   messageArray = messageArray.map(msg => typeof msg === 'object' ? JSON.stringify(msg) : msg)
   const logMessage = `${funcDetails}${messageArray.join(' - ')}`
-  const remoteLogMessage = `${level.toUpperCase()} - ${logMessage}`
-  const localLogMessage = `[ ${fDate} ${fTime} ] < ${level.toUpperCase()} > ${logMessage}`
+  const remoteLogMessage = `${logLevel.level} - ${logMessage}`
+  const localLogMessage = `[ ${fDate} ${fTime} ] < ${logLevel.level} >${logLevel.padding} ${logMessage}`
 
   const shouldLogToRemote = (loggerOptions.logToRemote && !(!inProduction && loggerOptions.onlyInProd)) || false
-  if (shouldLogToRemote) loggerOptions.remoteLogger.log(remoteLogMessage, { severity: syslogSeverity })
+  if (shouldLogToRemote) loggerOptions.remoteLogger.log(remoteLogMessage, { severity: logLevel.severity })
 
   loggerOptions.localLogger(localLogMessage)
 
