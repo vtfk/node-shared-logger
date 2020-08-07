@@ -1,18 +1,18 @@
-const packPath = require('packpath').parent()
+const pkgDir = require('pkg-dir')
 const { join } = require('path')
 
 const getPkgDeps = {
-  packPath,
+  pkgDir,
   join
 }
-
+console.log(pkgDir.sync())
 function _getPkgFactory (
   {
-    packPath,
+    pkgDir,
     join
   }) {
   try {
-    return require(join(packPath, 'package.json'))
+    return require(join(pkgDir.sync(), 'package.json'))
   } catch (error) {
     return undefined
   }
