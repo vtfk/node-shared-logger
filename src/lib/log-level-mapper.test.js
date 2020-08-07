@@ -2,18 +2,20 @@ const levelMapper = require('./log-level-mapper')
 
 describe('Checking if it returns correct value based on level', () => {
   const levels = [
-    { string: 'error', int: 0 },
-    { string: 'warn', int: 1 },
-    { string: 'info', int: 2 },
-    { string: 'verbose', int: 3 },
-    { string: 'debug', int: 4 },
-    { string: 'silly', int: 5 },
-    { string: 'Error', int: 0 },
-    { string: 'WARN', int: 1 }
+    { string: 'error', int: 0, message: 'ERROR', padding: '  ' },
+    { string: 'warn', int: 1, message: 'WARN', padding: '   ' },
+    { string: 'info', int: 2, message: 'INFO', padding: '   ' },
+    { string: 'verbose', int: 3, message: 'VERBOSE', padding: '' },
+    { string: 'debug', int: 4, message: 'DEBUG', padding: '  ' },
+    { string: 'silly', int: 5, message: 'SILLY', padding: '  ' },
+    { string: 'Error', int: 0, message: 'ERROR', padding: '  ' },
+    { string: 'WARN', int: 1, message: 'WARN', padding: '   ' }
   ]
   levels.forEach(level => {
-    it(`returns '${level.int}' when given string '${level.string}'`, () => {
-      expect(levelMapper(level.string)).toBe(level.int)
+    it(`returns { level: ${level.int}, message: '${level.message}', padding: ${level.padding} } when given string '${level.string}'`, () => {
+      expect(levelMapper(level.string).severity).toBe(level.int)
+      expect(levelMapper(level.string).level).toBe(level.message)
+      expect(levelMapper(level.string).padding).toBe(level.padding)
     })
   })
 

@@ -1,4 +1,5 @@
 const loggerFactory = require('./logger-factory')
+const logLevelMapper = require('./log-level-mapper')
 
 function matchLogMessage (message) {
   const logMessageMatcher = /^\[ (?<dateTime>\d{1,2}\/\d{1,2}\/\d{4} \d{2}:\d{2}:\d{2}) \] < (?<level>\w{1,10}) > ([^:]*: |)(?<message>.*$)/
@@ -12,7 +13,7 @@ function matchLogMessage (message) {
 function createLogger (fakeDeps) {
   const mergedFakeDeps = {
     formatDateTime: jest.fn((date) => ({ fDate: '00/0/0000', fTime: '00:00:00' })),
-    logLevelMapper: jest.fn((level) => 2),
+    logLevelMapper: jest.fn(logLevelMapper),
     loggerOptions: {
       localLogger: jest.fn((message) => {}),
       remoteLogger: {
@@ -75,7 +76,7 @@ describe('Syslog severity testing', () => {
   it('throws if syslogSeverity is undefined and not in production', () => {
     const { logger } = createLogger({
       inProduction: false,
-      logLevelMapper: level => undefined
+      logLevelMapper: logLevelMapper
     })
     expect(() => logger('unknown', 'msg')).toThrow()
     expect(() => logger()).toThrow()
@@ -84,7 +85,7 @@ describe('Syslog severity testing', () => {
   it('does not throw if syslogSeverity is undefined and is in production', () => {
     const { logger } = createLogger({
       inProduction: true,
-      logLevelMapper: level => undefined
+      logLevelMapper: logLevelMapper
     })
     expect(() => logger('unknown', 'msg')).not.toThrow()
     expect(() => logger()).not.toThrow()
