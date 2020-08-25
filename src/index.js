@@ -31,7 +31,7 @@ const loggerDeps = {
  * @description Configure the logger and add message suffix/prefix
  * @param {object}    [options]                           Options for logging
  * @param {object}    [options.remote]                    Options for remote logging. If undefined; disables remote logging
- * @param {string}    [options.remote.onlyInProd=true]    If true; only log to remote aggregator when NODE_ENV === 'production'
+ * @param {boolean}   [options.remote.onlyInProd=true]    If true; only log to remote aggregator when NODE_ENV === 'production'
  * @param {string}    [options.remote.host]               Hostname for the remote aggregator
  * @param {string}    [options.remote.port]               Port for the remote aggregator
  * @param {string}    [options.remote.serviceHostname]    The identificator of this service
