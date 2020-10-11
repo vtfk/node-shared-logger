@@ -22,7 +22,7 @@
     "syslog-client": "^1.1.1"
   },
   "devDependencies": {
-    "jest": "26.4.2",
+    "jest": "26.5.3",
     "jest-extended": "0.11.5",
     "standard": "14.3.4"
   },
