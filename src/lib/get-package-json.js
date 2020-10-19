@@ -5,7 +5,7 @@ const getPkgDeps = {
   pkgDir,
   join
 }
-console.log(pkgDir.sync())
+
 function _getPkgFactory (
   {
     pkgDir,
