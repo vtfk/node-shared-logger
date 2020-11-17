@@ -1,9 +1,12 @@
 function _logConfigFactory (options = {},
   {
     syslog,
+    deepmerge,
     loggerOptions,
     envVariables
   }) {
+  options = deepmerge(loggerOptions.previousOptions, options)
+  loggerOptions.previousOptions = options
   if (
     (!options || !options.remote) &&
     envVariables.PAPERTRAIL_HOST &&

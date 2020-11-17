@@ -1,4 +1,5 @@
 const syslog = require('syslog-client')
+const deepmerge = require('deepmerge')
 const logLevelMapper = require('./lib/log-level-mapper')
 const formatDateTime = require('./lib/format-date-time')
 const { pkg } = require('./lib/get-package-json')
@@ -14,6 +15,7 @@ const loggerOptions = {
 // Dependencies for the imported factory functions
 const logConfigDeps = {
   syslog,
+  deepmerge,
   loggerOptions,
   envVariables: process.env
 }
