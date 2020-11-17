@@ -1,3 +1,4 @@
+const deepmerge = require('deepmerge')
 const logConfigFactory = require('./log-config-factory')
 
 function createLogConfig (fakeDeps, options) {
@@ -8,6 +9,7 @@ function createLogConfig (fakeDeps, options) {
         Udp: 'udp'
       }
     },
+    deepmerge,
     loggerOptions: {},
     envVariables: {},
     ...fakeDeps
