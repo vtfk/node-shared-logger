@@ -1,13 +1,14 @@
-# VTFK-logger
+<h1 align=center >VTFK Logger</h1>
+<div align="center">
+  <img src="https://img.shields.io/github/workflow/status/vtfk/node-shared-logger/Tests?label=Tests&style=for-the-badge"/><img src="https://img.shields.io/github/workflow/status/vtfk/node-shared-logger/Publish?label=Publish&style=for-the-badge"/><img src="https://img.shields.io/npm/v/@vtfk/logger?style=for-the-badge&color=success"/><img alt="Coveralls github branch" src="https://img.shields.io/coveralls/github/vtfk/node-shared-logger/master?style=for-the-badge">
+</div>
+<div align="center">
+  <a href="https://github.com/vtfk/node-shared-logger"><img src="https://img.shields.io/static/v1?logo=github&label=&message=GITHUB&color=black&style=for-the-badge"/></a><a href="https://www.npmjs.com/package/@vtfk/logger"><img src="https://img.shields.io/static/v1?logo=npm&label=&message=NPM&color=red&style=for-the-badge"/></a>
+</div>
 
-[![GitHub Workflow Tests](https://img.shields.io/github/workflow/status/vtfk/node-shared-logger/Tests/master?label=Tests)](https://github.com/vtfk/node-shared-logger/actions?query=workflow%3ATests)
-[![Coveralls coverage](https://img.shields.io/coveralls/github/vtfk/node-shared-logger/master)](https://coveralls.io/github/vtfk/node-shared-logger?branch=master)
-[![GitHub Workflow Publish NPM](https://img.shields.io/github/workflow/status/vtfk/node-shared-logger/Publish/master?label=Publish)](https://github.com/vtfk/node-shared-logger/actions?query=workflow%3APublish)
-[![NPM version](https://img.shields.io/npm/v/@vtfk/logger)](https://www.npmjs.com/package/@vtfk/logger)
-[![GitHub release](https://img.shields.io/github/v/release/vtfk/node-shared-logger?label=GitHub&sort=semver)](https://github.com/vtfk/node-shared-logger)
-
-A simple syslog logger for node applications. Logs to console and remote syslog aggregator.  
-Only tested with Papertrail.
+<br>
+<p align=center >A simple syslog logger for node applications. Logs to console and a remote syslog aggregator.</p>
+<br>
 
 ## Installation
 
@@ -16,7 +17,11 @@ Only tested with Papertrail.
 ## Usage
 
 ## Config
-All options are optional. Logging to a remote syslog aggregator can be configured in logConfig() or as env variables.
+All options are optional. Logging to a remote syslog aggregator can be configured in `logConfig()` or as env variables.
+
+> Note: `logConfig()` can be called multiple times to update the config throughout the program.  
+  And it will keep the previous config parameter if not specified in the next call.
+
 ```
 const options = {
   remote: {                     // Options for remote logging. If undefined; disables remote logging
