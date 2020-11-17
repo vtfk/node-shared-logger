@@ -218,4 +218,48 @@ describe('Checking client creation', () => {
       rfc3164: false
     })
   })
+
+  it('supports setting one property of the config', () => {
+    const { fakeDeps, logConfig } = createLogConfig({}, {
+      prefix: 'kittens',
+      suffix: 'cats',
+      remote: {
+        host: 'example.com',
+        port: '8080',
+        serviceHostname: 'myApp'
+      }
+    })
+    expect(fakeDeps.loggerOptions.prefix).toBe('kittens')
+    expect(fakeDeps.loggerOptions.suffix).toBe('cats')
+    expect(fakeDeps.loggerOptions.remoteLogger).not.toBeUndefined()
+
+    logConfig({
+      prefix: 'very cute kittens'
+    })
+    expect(fakeDeps.loggerOptions.prefix).toBe('very cute kittens')
+    expect(fakeDeps.loggerOptions.suffix).toBe('cats')
+    expect(fakeDeps.loggerOptions.remoteLogger).not.toBeUndefined()
+  })
+
+  it('supports creating remote logger after initial config is set', () => {
+    const { fakeDeps, logConfig } = createLogConfig({}, {
+      prefix: 'kittens',
+      suffix: 'cats'
+    })
+    expect(fakeDeps.loggerOptions.prefix).toBe('kittens')
+    expect(fakeDeps.loggerOptions.suffix).toBe('cats')
+    expect(fakeDeps.loggerOptions.remoteLogger).toBeUndefined()
+
+    logConfig({
+      prefix: 'very cute kittens',
+      remote: {
+        host: 'example.com',
+        port: '8080',
+        serviceHostname: 'myApp'
+      }
+    })
+    expect(fakeDeps.loggerOptions.prefix).toBe('very cute kittens')
+    expect(fakeDeps.loggerOptions.suffix).toBe('cats')
+    expect(fakeDeps.loggerOptions.remoteLogger).not.toBeUndefined()
+  })
 })
