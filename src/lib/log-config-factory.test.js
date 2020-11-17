@@ -16,17 +16,20 @@ function createLogConfig (fakeDeps, options) {
   const logConfig = (options) => logConfigFactory(options, mergedFakeDeps)
 
   logConfig(options)
-  return mergedFakeDeps
+  return {
+    fakeDeps: mergedFakeDeps,
+    logConfig
+  }
 }
 
 describe('Checking client creation', () => {
   it('does not create a client on empty options', () => {
-    const fakeDeps = createLogConfig()
+    const { fakeDeps } = createLogConfig()
     expect(fakeDeps.loggerOptions.remoteLogger).toBeUndefined()
   })
 
   it('was passed the correct options', () => {
-    const fakeDeps = createLogConfig({}, {
+    const { fakeDeps } = createLogConfig({}, {
       remote: {
         host: 'example.com',
         port: '8080',
@@ -47,7 +50,7 @@ describe('Checking client creation', () => {
   })
 
   it('sets logToRemote as false on wrong config', () => {
-    const fakeDeps = createLogConfig({}, {
+    const { fakeDeps } = createLogConfig({}, {
       remote: {
         host: 'example.com',
         port: '8080',
@@ -59,7 +62,7 @@ describe('Checking client creation', () => {
   })
 
   it('sets prefix if defined', () => {
-    const fakeDeps = createLogConfig({}, {
+    const { fakeDeps } = createLogConfig({}, {
       prefix: 'my-prefix'
     })
 
@@ -67,7 +70,7 @@ describe('Checking client creation', () => {
   })
 
   it('sets suffix if defined', () => {
-    const fakeDeps = createLogConfig({}, {
+    const { fakeDeps } = createLogConfig({}, {
       suffix: 'my-suffix'
     })
 
@@ -75,7 +78,7 @@ describe('Checking client creation', () => {
   })
 
   it('assings localLogger to options if function', () => {
-    const fakeDeps = createLogConfig({}, {
+    const { fakeDeps } = createLogConfig({}, {
       localLogger: () => {}
     })
 
@@ -83,7 +86,7 @@ describe('Checking client creation', () => {
   })
 
   it('does not assing localLogger to options if not a function', () => {
-    const fakeDeps = createLogConfig({}, {
+    const { fakeDeps } = createLogConfig({}, {
       localLogger: 'not a function'
     })
 
@@ -91,7 +94,7 @@ describe('Checking client creation', () => {
   })
 
   it('uses env variables if remote is not defined', () => {
-    const fakeDeps = createLogConfig({
+    const { fakeDeps } = createLogConfig({
       envVariables: {
         PAPERTRAIL_HOST: 'env.example.com',
         PAPERTRAIL_PORT: '8081',
@@ -112,7 +115,7 @@ describe('Checking client creation', () => {
   })
 
   it('uses remote if both env variables and remote is defined', () => {
-    const fakeDeps = createLogConfig({
+    const { fakeDeps } = createLogConfig({
       envVariables: {
         PAPERTRAIL_HOST: 'env.example.com',
         PAPERTRAIL_PORT: '8081',
@@ -139,7 +142,7 @@ describe('Checking client creation', () => {
   })
 
   it('uses remote if both env variables and remote is defined, no remote.host', () => {
-    const fakeDeps = createLogConfig({
+    const { fakeDeps } = createLogConfig({
       envVariables: {
         PAPERTRAIL_HOST: 'env.example.com',
         PAPERTRAIL_PORT: '8081',
@@ -165,7 +168,7 @@ describe('Checking client creation', () => {
   })
 
   it('uses remote if both env variables and remote is defined, no remote.port', () => {
-    const fakeDeps = createLogConfig({
+    const { fakeDeps } = createLogConfig({
       envVariables: {
         PAPERTRAIL_HOST: 'env.example.com',
         PAPERTRAIL_PORT: '8081',
@@ -191,7 +194,7 @@ describe('Checking client creation', () => {
   })
 
   it('uses remote if both env variables and remote is defined, no remote.serviceHostname', () => {
-    const fakeDeps = createLogConfig({
+    const { fakeDeps } = createLogConfig({
       envVariables: {
         PAPERTRAIL_HOST: 'env.example.com',
         PAPERTRAIL_PORT: '8081',
