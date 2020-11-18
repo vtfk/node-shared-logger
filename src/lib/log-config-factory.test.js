@@ -265,3 +265,75 @@ describe('Checking client creation', () => {
     expect(fakeDeps.loggerOptions.remoteLogger).not.toBeUndefined()
   })
 })
+
+function createAzureMock (id = '02sd1514-c4dc-4c3a-ae9f-0066bb1da3a4') {
+  return {
+    context: {
+      invocationId: id,
+      log: {
+        error: jest.fn((host, options) => ({})),
+        warn: jest.fn((host, options) => ({})),
+        info: jest.fn((host, options) => ({})),
+        verbose: jest.fn((host, options) => ({}))
+      }
+    }
+  }
+}
+
+describe('Checking usage of Azure context', () => {
+  it('adds invocationId to loggerOptions.azure.invocationId', () => {
+    const { context } = createAzureMock('02sd1514-c4dc-4c3a-ae9f-0066bb1da3a4')
+    const { fakeDeps, logConfig } = createLogConfig({})
+    logConfig({
+      azure: { context }
+    })
+    expect(fakeDeps.loggerOptions.azure.invocationId).toBe('02sd1514-c4dc-4c3a-ae9f-0066bb1da3a4')
+  })
+
+  it('adds the Azure logger functions to loggerOptions.azure.log[level]', () => {
+    const { context } = createAzureMock('02sd1514-c4dc-4c3a-ae9f-0066bb1da3a4')
+    const { fakeDeps, logConfig } = createLogConfig({})
+    logConfig({
+      azure: { context }
+    })
+    expect(fakeDeps.loggerOptions.azure.log.error).toBeFunction()
+    expect(fakeDeps.loggerOptions.azure.log.warn).toBeFunction()
+    expect(fakeDeps.loggerOptions.azure.log.info).toBeFunction()
+    expect(fakeDeps.loggerOptions.azure.log.verbose).toBeFunction()
+  })
+
+  it('adds excludeInvocationId loggerOptions.azure.excludeInvocationId', () => {
+    const { context } = createAzureMock('02sd1514-c4dc-4c3a-ae9f-0066bb1da3a4')
+    const { fakeDeps, logConfig } = createLogConfig({})
+    logConfig({
+      azure: {
+        context,
+        excludeInvocationId: true
+      }
+    })
+    expect(fakeDeps.loggerOptions.azure.excludeInvocationId).toBe(true)
+  })
+
+  it('does not add loggerOptions.azure.excludeInvocationId if undefined', () => {
+    const { context } = createAzureMock('02sd1514-c4dc-4c3a-ae9f-0066bb1da3a4')
+    const { fakeDeps, logConfig } = createLogConfig({})
+    logConfig({
+      azure: {
+        context
+      }
+    })
+    expect(fakeDeps.loggerOptions.azure.excludeInvocationId).toBeUndefined()
+  })
+
+  it('does not add loggerOptions.azure.excludeInvocationId if false', () => {
+    const { context } = createAzureMock('02sd1514-c4dc-4c3a-ae9f-0066bb1da3a4')
+    const { fakeDeps, logConfig } = createLogConfig({})
+    logConfig({
+      azure: {
+        context,
+        excludeInvocationId: false
+      }
+    })
+    expect(fakeDeps.loggerOptions.azure.excludeInvocationId).toBeUndefined()
+  })
+})
