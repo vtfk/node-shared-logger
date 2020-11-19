@@ -1,22 +1,41 @@
 const levelMapper = {
-  error: 0,
-  warn: 1,
-  info: 2,
-  verbose: 3,
-  debug: 4,
-  silly: 5
+  error: {
+    severity: 0,
+    azureLevel: 'error'
+  },
+  warn: {
+    severity: 1,
+    azureLevel: 'warn'
+  },
+  info: {
+    severity: 2,
+    azureLevel: 'info'
+  },
+  verbose: {
+    severity: 3,
+    azureLevel: 'verbose'
+  },
+  debug: {
+    severity: 4,
+    azureLevel: 'verbose'
+  },
+  silly: {
+    severity: 5,
+    azureLevel: 'verbose'
+  }
 }
 
 const longestLevelString = Object.keys(levelMapper).reduce((prev, curr) => curr.length > prev.length ? curr : prev)
 
 module.exports = (level) => {
   try {
-    const severity = levelMapper[level.toLowerCase()]
-    if (typeof severity === 'number') {
+    const mappedLevel = levelMapper[level.toLowerCase()]
+    if (typeof mappedLevel === 'object') {
       return {
-        severity,
+        severity: mappedLevel.severity,
         level: level.toUpperCase(),
-        padding: ' '.repeat(longestLevelString.length - level.length)
+        padding: ' '.repeat(longestLevelString.length - level.length),
+        azureLevel: mappedLevel.azureLevel
       }
     }
   } catch (error) {

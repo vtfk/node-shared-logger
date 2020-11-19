@@ -39,3 +39,21 @@ describe('Checking if it returns correct value based on level', () => {
     expect(levelMapper(null)).not.toBeDefined()
   })
 })
+
+describe('Checking if it returns correct azureLevel', () => {
+  const levels = [
+    { string: 'error', azureLevel: 'error' },
+    { string: 'warn', azureLevel: 'warn' },
+    { string: 'info', azureLevel: 'info' },
+    { string: 'verbose', azureLevel: 'verbose' },
+    { string: 'debug', azureLevel: 'verbose' },
+    { string: 'silly', azureLevel: 'verbose' },
+    { string: 'INfo', azureLevel: 'info' },
+    { string: 'SILLY', azureLevel: 'verbose' }
+  ]
+  levels.forEach(level => {
+    it(`returns azureLevel: '${level.azureLevel}', when given string '${level.string}'`, () => {
+      expect(levelMapper(level.string).azureLevel).toBe(level.azureLevel)
+    })
+  })
+})

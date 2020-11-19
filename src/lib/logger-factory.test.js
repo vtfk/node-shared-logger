@@ -4,6 +4,7 @@ const logLevelMapper = require('./log-level-mapper')
 function matchLogMessage (message) {
   const logMessageMatcher = /^\[ (?<dateTime>\d{1,2}\/\d{1,2}\/\d{4} \d{2}:\d{2}:\d{2}) \] < (?<level>\w{1,10}) > ([^:]*: |)(?<message>.*$)/
   const match = message.match(logMessageMatcher)
+  if (match === null) return null
   return {
     fullMatch: match[0],
     ...match.groups
@@ -284,6 +285,106 @@ describe('Logging to remote', () => {
       const loggedToRemote = logger('info', 'msg')
 
       expect(loggedToRemote).toBe(testCase.shouldLog)
+    })
+  })
+})
+
+describe('Checking logging with Azure context', () => {
+  it('appends invocationId to prefix', () => {
+    const invocationId = '02sd1514-c4dc-4c3a-ae9f-0066bb1da3a4'
+    const { logger, mergedFakeDeps } = createLogger({
+      loggerOptions: {
+        localLogger: jest.fn((message) => {}),
+        azure: {
+          invocationId: invocationId,
+          log: {
+            info: jest.fn((host, options) => ({}))
+          }
+        }
+      }
+    })
+
+    logger('info', ['array', 123])
+
+    const azure = mergedFakeDeps.loggerOptions.azure.log.info.mock.calls[0][0]
+    console.log(azure)
+    expect(azure).toMatch(new RegExp(`^${invocationId}`))
+  })
+
+  it('does not append invocationId to prefix if loggerOptions.azure.excludeInvocationId is true', () => {
+    const invocationId = '02sd1514-c4dc-4c3a-ae9f-0066bb1da3a4'
+    const { logger, mergedFakeDeps } = createLogger({
+      loggerOptions: {
+        localLogger: jest.fn((message) => {}),
+        azure: {
+          invocationId: invocationId,
+          excludeInvocationId: true,
+          log: {
+            info: jest.fn((host, options) => ({}))
+          }
+        }
+      }
+    })
+
+    logger('info', ['array', 123])
+
+    const azure = mergedFakeDeps.loggerOptions.azure.log.info.mock.calls[0][0]
+    expect(azure).not.toMatch(new RegExp(`^${invocationId}`))
+  })
+
+  it('does not log to local', () => {
+    const invocationId = '02sd1514-c4dc-4c3a-ae9f-0066bb1da3a4'
+    const { logger, mergedFakeDeps } = createLogger({
+      loggerOptions: {
+        localLogger: jest.fn((message) => {}),
+        azure: {
+          invocationId: invocationId,
+          log: {
+            error: jest.fn((host, options) => ({})),
+            warn: jest.fn((host, options) => ({})),
+            info: jest.fn((host, options) => ({})),
+            verbose: jest.fn((host, options) => ({}))
+          }
+        }
+      }
+    })
+
+    logger('info', ['array', 123])
+    const localLogger = mergedFakeDeps.loggerOptions.localLogger
+    expect(localLogger).not.toHaveBeenCalled()
+  })
+
+  const tests = [
+    { level: 'error', toBeCalled: 'error' },
+    { level: 'warn', toBeCalled: 'warn' },
+    { level: 'info', toBeCalled: 'info' },
+    { level: 'verbose', toBeCalled: 'verbose' },
+    { level: 'debug', toBeCalled: 'verbose' },
+    { level: 'silly', toBeCalled: 'verbose' }
+  ]
+
+  tests.forEach(test => {
+    it(`logs to context.logs.${test.toBeCalled} on ${test.level} level`, () => {
+      const invocationId = '02sd1514-c4dc-4c3a-ae9f-0066bb1da3a4'
+      const { logger, mergedFakeDeps } = createLogger({
+        loggerOptions: {
+          localLogger: jest.fn((message) => {}),
+          azure: {
+            invocationId: invocationId,
+            log: {
+              error: jest.fn((host, options) => ({})),
+              warn: jest.fn((host, options) => ({})),
+              info: jest.fn((host, options) => ({})),
+              verbose: jest.fn((host, options) => ({}))
+            }
+          }
+        }
+      })
+
+      logger(test.level, ['array', 123])
+
+      const azure = mergedFakeDeps.loggerOptions.azure
+      expect(azure.log[test.toBeCalled]).toHaveBeenCalled()
     })
   })
 })

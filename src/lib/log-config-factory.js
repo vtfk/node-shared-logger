@@ -54,6 +54,23 @@ function _logConfigFactory (options = {},
   if (typeof options.localLogger === 'function') {
     loggerOptions.localLogger = options.localLogger
   }
+
+  if (typeof options.azure !== 'undefined' && typeof options.azure.context !== 'undefined') {
+    loggerOptions.azure = {}
+
+    if (typeof options.azure.context.invocationId === 'string') {
+      loggerOptions.azure.invocationId = options.azure.context.invocationId
+    }
+
+    const log = options.azure.context.log
+    if (log && log.error && log.warn && log.info && log.verbose) {
+      loggerOptions.azure.log = log
+    }
+
+    if (options.azure.excludeInvocationId === true) {
+      loggerOptions.azure.excludeInvocationId = options.azure.excludeInvocationId
+    }
+  }
 }
 
 module.exports = _logConfigFactory
