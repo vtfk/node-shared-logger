@@ -271,7 +271,7 @@ function createAzureMock (id = '02sd1514-c4dc-4c3a-ae9f-0066bb1da3a4', includeLo
     invocationId: id,
     log: {}
   }
-  includeLoggers.forEach(logger => context.log[logger] = jest.fn((host, options) => ({})))
+  includeLoggers.forEach(logger => { context.log[logger] = jest.fn((host, options) => ({})) })
   return { context }
 }
 
