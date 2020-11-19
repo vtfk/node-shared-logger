@@ -12,9 +12,9 @@
   "files": [
     "src"
   ],
-	"engines": {
-		"node": ">=10"
-	},
+  "engines": {
+    "node": ">=10"
+  },
   "repository": "github:vtfk/node-shared-logger",
   "bugs": "https://github.com/vtfk/node-shared-logger/issues",
   "homepage": "https://github.com/vtfk/node-shared-logger#readme",
