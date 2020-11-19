@@ -18,6 +18,18 @@ declare module '@vtfk/logger' {
       serviceHostname?: string
       serviceAppname?: string
     }
+    azure?: {
+      context?: {
+        invocationId?: string
+        log?: {
+          error: () => void
+          warn: () => void
+          info: () => void
+          verbose: () => void
+        }
+      }
+      excludeInvocationId?: boolean
+    }
     prefix?: string
     suffix?: string
     localLogger?: (message: any) => void

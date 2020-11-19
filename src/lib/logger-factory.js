@@ -24,6 +24,10 @@ function _loggerFactory (level, message,
     messageArray.push(loggerOptions.suffix)
   } else if (loggerOptions.suffix && !inProduction) throw Error('logConfig({ --> suffix: ... <-- }) has to be of type string!')
 
+  if (loggerOptions.azure && loggerOptions.azure.invocationId && loggerOptions.azure.excludeInvocationId !== true) {
+    messageArray.unshift(loggerOptions.azure.invocationId)
+  }
+
   const funcDetails = pkg && pkg.version ? `${pkg.name} - ${pkg.version}: ` : ''
   messageArray = messageArray.map(msg => typeof msg === 'object' ? JSON.stringify(msg) : msg)
   const logMessage = `${funcDetails}${messageArray.join(' - ')}`
@@ -33,7 +37,12 @@ function _loggerFactory (level, message,
   const shouldLogToRemote = (loggerOptions.logToRemote && !(!inProduction && loggerOptions.onlyInProd)) || false
   if (shouldLogToRemote) loggerOptions.remoteLogger.log(remoteLogMessage, { severity: logLevel.severity })
 
-  loggerOptions.localLogger(localLogMessage)
+  if (loggerOptions.azure && loggerOptions.azure.log) {
+    const log = loggerOptions.azure.log
+    log[logLevel.azureLevel](logMessage)
+  } else {
+    loggerOptions.localLogger(localLogMessage)
+  }
 
   return shouldLogToRemote
 }
