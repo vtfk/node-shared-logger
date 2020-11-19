@@ -266,18 +266,13 @@ describe('Checking client creation', () => {
   })
 })
 
-function createAzureMock (id = '02sd1514-c4dc-4c3a-ae9f-0066bb1da3a4') {
-  return {
-    context: {
-      invocationId: id,
-      log: {
-        error: jest.fn((host, options) => ({})),
-        warn: jest.fn((host, options) => ({})),
-        info: jest.fn((host, options) => ({})),
-        verbose: jest.fn((host, options) => ({}))
-      }
-    }
+function createAzureMock (id = '02sd1514-c4dc-4c3a-ae9f-0066bb1da3a4', includeLoggers = ['error', 'warn', 'info', 'verbose']) {
+  const context = {
+    invocationId: id,
+    log: {}
   }
+  includeLoggers.forEach(logger => context.log[logger] = jest.fn((host, options) => ({})))
+  return { context }
 }
 
 describe('Checking usage of Azure context', () => {
@@ -288,6 +283,51 @@ describe('Checking usage of Azure context', () => {
       azure: { context }
     })
     expect(fakeDeps.loggerOptions.azure.invocationId).toBe('02sd1514-c4dc-4c3a-ae9f-0066bb1da3a4')
+  })
+
+  it('does not add invocationId to loggerOptions.azure.invocationId if invocationId is not a string', () => {
+    const { context } = createAzureMock(122305123)
+    const { fakeDeps, logConfig } = createLogConfig({})
+    logConfig({
+      azure: { context }
+    })
+    expect(fakeDeps.loggerOptions.azure.invocationId).not.toBe(122305123)
+  })
+
+  it('does not add the Azure logger functions to loggerOptions.azure.log[level] if error is missing', () => {
+    const { context } = createAzureMock('02sd1514-c4dc-4c3a-ae9f-0066bb1da3a4', ['warn', 'info', 'verbose'])
+    const { fakeDeps, logConfig } = createLogConfig({})
+    logConfig({
+      azure: { context }
+    })
+    expect(fakeDeps.loggerOptions.azure.log).toBeUndefined()
+  })
+
+  it('does not add the Azure logger functions to loggerOptions.azure.log[level] if warn is missing', () => {
+    const { context } = createAzureMock('02sd1514-c4dc-4c3a-ae9f-0066bb1da3a4', ['error', 'info', 'verbose'])
+    const { fakeDeps, logConfig } = createLogConfig({})
+    logConfig({
+      azure: { context }
+    })
+    expect(fakeDeps.loggerOptions.azure.log).toBeUndefined()
+  })
+
+  it('does not add the Azure logger functions to loggerOptions.azure.log[level] if info is missing', () => {
+    const { context } = createAzureMock('02sd1514-c4dc-4c3a-ae9f-0066bb1da3a4', ['error', 'warn', 'verbose'])
+    const { fakeDeps, logConfig } = createLogConfig({})
+    logConfig({
+      azure: { context }
+    })
+    expect(fakeDeps.loggerOptions.azure.log).toBeUndefined()
+  })
+
+  it('does not add the Azure logger functions to loggerOptions.azure.log[level] if verbose is missing', () => {
+    const { context } = createAzureMock('02sd1514-c4dc-4c3a-ae9f-0066bb1da3a4', ['error', 'warn', 'info'])
+    const { fakeDeps, logConfig } = createLogConfig({})
+    logConfig({
+      azure: { context }
+    })
+    expect(fakeDeps.loggerOptions.azure.log).toBeUndefined()
   })
 
   it('adds the Azure logger functions to loggerOptions.azure.log[level]', () => {
