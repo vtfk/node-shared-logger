@@ -31,6 +31,7 @@ describe('Testing returned functions', () => {
     const oldEnvs = process.env
     process.env = {
       ...process.env,
+      NODE_ENV: 'production',
       PAPERTRAIL_HOST: 'env.example.com',
       PAPERTRAIL_PORT: '8081',
       PAPERTRAIL_HOSTNAME: 'envApp',
@@ -41,6 +42,47 @@ describe('Testing returned functions', () => {
     index = require('./index')
 
     expect(index.logger('info', ['test', 'message'])).toBe(true)
+    process.env = oldEnvs
+
+    jest.resetModules()
+    index = require('./index')
+  })
+
+  it('does not log to remote if NODE_ENV !== produciton', () => {
+    const oldEnvs = process.env
+    process.env = {
+      ...process.env,
+      NODE_ENV: 'dev',
+      PAPERTRAIL_HOST: 'env.example.com',
+      PAPERTRAIL_PORT: '8081',
+      PAPERTRAIL_HOSTNAME: 'envApp',
+      PAPERTRAIL_APPNAME: 'testApp'
+    }
+    // Make sure it uses these env variables
+    jest.resetModules()
+    index = require('./index')
+
+    expect(index.logger('info', ['test', 'message'])).toBe(false)
+    process.env = oldEnvs
+
+    jest.resetModules()
+    index = require('./index')
+  })
+
+  it('does not log to remote if NODE_ENV is undefined', () => {
+    const oldEnvs = process.env
+    process.env = {
+      ...process.env,
+      PAPERTRAIL_HOST: 'env.example.com',
+      PAPERTRAIL_PORT: '8081',
+      PAPERTRAIL_HOSTNAME: 'envApp',
+      PAPERTRAIL_APPNAME: 'testApp'
+    }
+    // Make sure it uses these env variables
+    jest.resetModules()
+    index = require('./index')
+
+    expect(index.logger('info', ['test', 'message'])).toBe(false)
     process.env = oldEnvs
 
     jest.resetModules()

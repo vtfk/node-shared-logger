@@ -9,7 +9,8 @@ const { inProduction } = require('./lib/in-production')
 
 // Store the options after configuration
 const loggerOptions = {
-  localLogger: console.log
+  localLogger: console.log,
+  onlyInProd: true
 }
 
 // Dependencies for the imported factory functions
