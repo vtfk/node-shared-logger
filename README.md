@@ -25,7 +25,7 @@ All options are optional. Logging to a remote syslog aggregator can be configure
 ```js
 const options = {
   remote: {                     // Options for remote logging. If undefined; disables remote logging
-    disabled: false              // If true; disables logging to remote, even if remote config is set
+    disabled: false,            // If true; disables logging to remote, even if remote config is set
     onlyInProd: true,           // If true; only log to remote aggregator when NODE_ENV === 'production'
     host: '',                   // Hostname for the remote aggregator
     port: '',                   // Port for the remote aggregator
