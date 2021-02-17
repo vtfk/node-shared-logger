@@ -39,14 +39,11 @@ function _logConfigFactory (options = {},
     // onlyInProd defaults to true
     options.remote.onlyInProd = options.remote.onlyInProd === undefined
 
-    if (
-      !options.remote.disabled &&
+    // enables remote logging if everything checks out, otherwise remote logging will be disabled
+    loggerOptions.logToRemote = !options.remote.disabled &&
       typeof options.remote.host === 'string' &&
       typeof options.remote.port === 'string' &&
       typeof options.remote.serviceHostname === 'string'
-    ) {
-      loggerOptions.logToRemote = true
-    }
   }
 
   loggerOptions.prefix = typeof options.prefix === 'string' ? options.prefix : undefined

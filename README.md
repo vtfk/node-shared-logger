@@ -110,6 +110,35 @@ logger('error', ['Error in app', error])
 [ 2019-05-19 15:13:35 ] < ERROR >  {NAME-OF-APP} - {VER-OF-APP}: prefixedValue - Error in app - Error: Error in process - suffixedValue
 ```
 
+#### Ex. Disable logging to remote
+Configuration of remote options in the `logConfig()` function
+```js
+const { logConfig, logger } = require('@vtfk/logger')
+
+// logConfig() is optional
+logConfig({
+  remote: {
+    disabled: true,
+    onlyInProd: true,
+    host: 'papertrail.example.com',
+    port: 5050,
+    serviceHostname: 'my-server-name'
+  }
+  prefix: 'prefixedValue',
+  suffix: 'suffixedValue'
+})
+
+logger('info', ['test', 'message'])
+
+const error = Error('Error in process')
+logger('error', ['Error in app', error])
+
+// OUTPUT
+// NAME-OF-APP and VER-OF-APP is the value of "name" and "version" in your package.json
+[ 2019-05-19 15:13:35 ] < INFO >  {NAME-OF-APP} - {VER-OF-APP}: prefixedValue - test - message - suffixedValue
+[ 2019-05-19 15:13:35 ] < ERROR >  {NAME-OF-APP} - {VER-OF-APP}: prefixedValue - Error in app - Error: Error in process - suffixedValue
+```
+
 #### Ex. Azure Function
 Pass the `context` object from Azure Function to add a ìnvocationId and use `context.log[level](message)`.
 > Note: If the `context` object contains all log functions (`context.log[levels]`) then it will log using these instead of `options.localLogger`
