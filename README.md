@@ -25,6 +25,7 @@ All options are optional. Logging to a remote syslog aggregator can be configure
 ```js
 const options = {
   remote: {                     // Options for remote logging. If undefined; disables remote logging
+    disabled: false              // If true; disables logging to remote, even if remote config is set
     onlyInProd: true,           // If true; only log to remote aggregator when NODE_ENV === 'production'
     host: '',                   // Hostname for the remote aggregator
     port: '',                   // Port for the remote aggregator
@@ -34,7 +35,7 @@ const options = {
   azure: {                      // Options for Azure
     context: context,           // The context object received from an Azure Function (see example further down)
     excludeInvocationId: false  // If true; do not append the invocationId from the context object
-  }
+  },
   prefix: '',                   // A string that will be added in front of each log message (ex. UID for each run)
   suffix: '',                   // A string that will be added at the end of each log message
   localLogger: console.log      // Replace the local logger with a custom function (Default: console.log)

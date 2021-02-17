@@ -6,7 +6,6 @@ function _loggerFactory (level, message,
     pkg,
     inProduction
   }) {
-  const { fDate, fTime } = formatDateTime(new Date())
   let messageArray = Array.isArray(message) ? message : [message]
   let logLevel = logLevelMapper(level)
 
@@ -28,23 +27,41 @@ function _loggerFactory (level, message,
     messageArray.unshift(loggerOptions.azure.invocationId)
   }
 
-  const funcDetails = pkg && pkg.version ? `${pkg.name} - ${pkg.version}: ` : ''
   messageArray = messageArray.map(msg => typeof msg === 'object' ? JSON.stringify(msg) : msg)
-  const logMessage = `${funcDetails}${messageArray.join(' - ')}`
-  const remoteLogMessage = `${logLevel.level} - ${logMessage}`
-  const localLogMessage = `[ ${fDate} ${fTime} ] < ${logLevel.level} >${logLevel.padding} ${logMessage}`
+  const messageFormats = formatLogMessage(formatDateTime, pkg, logLevel, messageArray)
 
   const shouldLogToRemote = (loggerOptions.logToRemote && !(!inProduction && loggerOptions.onlyInProd)) || false
-  if (shouldLogToRemote) loggerOptions.remoteLogger.log(remoteLogMessage, { severity: logLevel.severity })
-
-  if (loggerOptions.azure && loggerOptions.azure.log) {
-    const log = loggerOptions.azure.log
-    log[logLevel.azureLevel](logMessage)
-  } else {
-    loggerOptions.localLogger(localLogMessage)
+  try {
+    if (shouldLogToRemote) loggerOptions.remoteLogger.log(messageFormats.remoteLogMessage, { severity: logLevel.severity })
+  } catch (error) {
+    const warnLevel = logLevelMapper('warn')
+    const errorMessage = formatLogMessage(formatDateTime, pkg, warnLevel, ['logger-factory', 'logToRemote', 'error', error.message])
+    localLog(loggerOptions, warnLevel, errorMessage)
   }
 
+  localLog(loggerOptions, logLevel, messageFormats)
+
   return shouldLogToRemote
+}
+
+function formatLogMessage (formatDateTime, pkg, logLevel, messageArray) {
+  const { fDate, fTime } = formatDateTime(new Date())
+  const funcDetails = pkg && pkg.version ? `${pkg.name} - ${pkg.version}: ` : ''
+  const logMessage = `${funcDetails}${messageArray.join(' - ')}`
+  return {
+    logMessage,
+    remoteLogMessage: `${logLevel.level} - ${logMessage}`,
+    localLogMessage: `[ ${fDate} ${fTime} ] < ${logLevel.level} >${logLevel.padding} ${logMessage}`
+  }
+}
+
+function localLog (loggerOptions, logLevel, messageFormats) {
+  if (loggerOptions.azure && loggerOptions.azure.log) {
+    const log = loggerOptions.azure.log
+    log[logLevel.azureLevel](messageFormats.logMessage)
+  } else {
+    loggerOptions.localLogger(messageFormats.localLogMessage)
+  }
 }
 
 module.exports = _loggerFactory

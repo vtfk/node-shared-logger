@@ -40,6 +40,7 @@ function _logConfigFactory (options = {},
     options.remote.onlyInProd = options.remote.onlyInProd === undefined
 
     if (
+      !options.remote.disabled &&
       typeof options.remote.host === 'string' &&
       typeof options.remote.port === 'string' &&
       typeof options.remote.serviceHostname === 'string'

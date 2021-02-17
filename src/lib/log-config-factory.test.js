@@ -63,6 +63,19 @@ describe('Checking client creation', () => {
     expect(fakeDeps.loggerOptions.logToRemote).toBeFalsy()
   })
 
+  it('sets logToRemote as false if remote.disabled is true', () => {
+    const { fakeDeps } = createLogConfig({}, {
+      remote: {
+        disabled: true,
+        host: 'example.com',
+        port: '8080',
+        serviceHostname: 'myApp'
+      }
+    })
+
+    expect(fakeDeps.loggerOptions.logToRemote).toBeFalsy()
+  })
+
   it('sets prefix if defined', () => {
     const { fakeDeps } = createLogConfig({}, {
       prefix: 'my-prefix'
