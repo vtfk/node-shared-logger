@@ -12,6 +12,7 @@ declare module '@vtfk/logger' {
 
   interface LogConfigOptions {
     remote?: {
+      disabled?: boolean
       onlyInProd?: boolean
       host?: string
       port?: string
