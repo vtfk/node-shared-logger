@@ -32,20 +32,22 @@ function _loggerFactory (level, message,
 
   const shouldLogToRemote = (loggerOptions.logToRemote && !(!inProduction && loggerOptions.onlyInProd)) || false
   if (shouldLogToRemote) {
-    // TODO: Nasty code, find a better solution (while not making the logger async)
-    (async () => {
-      await new Promise((resolve) => {
-        loggerOptions.remoteLogger.log(messageFormats.remoteLogMessage, { severity: logLevel.severity }, error => {
-          if (error) {
-            const warnLevel = logLevelMapper('warn')
-            const errorMessage = formatLogMessage(formatDateTime, pkg, warnLevel, ['logger-factory', 'logToRemote', 'error', error.message])
-            localLog(loggerOptions, warnLevel, errorMessage)
-          } else {
-            resolve()
-          }
-        })
-      })
-    })()
+    const timeout = setTimeout(() => {
+      loggerOptions.remoteLogger.close()
+      const warnLevel = logLevelMapper('warn')
+      const errorMessage = formatLogMessage(formatDateTime, pkg, warnLevel, ['logger-factory', 'logToRemote', 'error', 'remote logger timed out'])
+      localLog(loggerOptions, warnLevel, errorMessage)
+    }, loggerOptions.remoteTimeout)
+
+    loggerOptions.remoteLogger.log(messageFormats.remoteLogMessage, { severity: logLevel.severity }, error => {
+      if (error) {
+        loggerOptions.remoteLogger.close()
+        const warnLevel = logLevelMapper('warn')
+        const errorMessage = formatLogMessage(formatDateTime, pkg, warnLevel, ['logger-factory', 'logToRemote', 'error', error.message])
+        localLog(loggerOptions, warnLevel, errorMessage)
+      }
+      clearTimeout(timeout)
+    })
   }
 
   localLog(loggerOptions, logLevel, messageFormats)

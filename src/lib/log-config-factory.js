@@ -36,6 +36,8 @@ function _logConfigFactory (options = {},
       rfc3164: false // Use RFC5424
     })
 
+    loggerOptions.remoteTimeout = options.remote.timeout || 1000
+
     // onlyInProd defaults to true
     options.remote.onlyInProd = options.remote.onlyInProd === undefined
 
