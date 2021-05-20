@@ -27,7 +27,15 @@ function _loggerFactory (level, message,
     messageArray.unshift(loggerOptions.azure.invocationId)
   }
 
-  messageArray = messageArray.map(msg => typeof msg === 'object' ? JSON.stringify(msg) : msg)
+  if (typeof loggerOptions.error === 'object') {
+    loggerOptions.error.property = loggerOptions.error.useMessage ? 'message' : 'stack'
+  } else {
+    loggerOptions.error = {
+      property: 'stack'
+    }
+  }
+
+  messageArray = messageArray.map(msg => typeof msg === 'object' ? msg instanceof Error ? msg[loggerOptions.error.property] : JSON.stringify(msg) : msg)
   const messageFormats = formatLogMessage(formatDateTime, pkg, logLevel, messageArray)
 
   const shouldLogToRemote = (loggerOptions.logToRemote && !(!inProduction && loggerOptions.onlyInProd)) || false
