@@ -1,3 +1,5 @@
+const getMessage = require('./get-message')
+
 function _loggerFactory (level, message,
   {
     formatDateTime,
@@ -27,7 +29,15 @@ function _loggerFactory (level, message,
     messageArray.unshift(loggerOptions.azure.invocationId)
   }
 
-  messageArray = messageArray.map(msg => typeof msg === 'object' ? JSON.stringify(msg) : msg)
+  if (typeof loggerOptions.error === 'object') {
+    loggerOptions.error.property = loggerOptions.error.useMessage ? 'message' : 'stack'
+  } else {
+    loggerOptions.error = {
+      property: 'stack'
+    }
+  }
+
+  messageArray = messageArray.map(msg => getMessage(msg, loggerOptions.error.property))
   const messageFormats = formatLogMessage(formatDateTime, pkg, logLevel, messageArray)
 
   const shouldLogToRemote = (loggerOptions.logToRemote && !(!inProduction && loggerOptions.onlyInProd)) || false

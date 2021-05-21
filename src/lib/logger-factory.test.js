@@ -71,6 +71,25 @@ describe('Checking parameters', () => {
 
     expect(localLogger).toContain('{"myKey":"thisValue","my2ndKey":"otherValue"}')
   })
+
+  it('logs error stack if error given but no option', () => {
+    const { logger, mergedFakeDeps } = createLogger()
+    logger('info', [new Error('Fake error')])
+    const localLogger = mergedFakeDeps.loggerOptions.localLogger.mock.calls[0][0]
+
+    expect(localLogger).toContain('Error: Fake error\n')
+  })
+
+  it('logs error message if error given and useMessage in option is set', () => {
+    const { logger, mergedFakeDeps } = createLogger()
+    mergedFakeDeps.loggerOptions.error = {
+      useMessage: true
+    }
+    logger('info', [new Error('Fake error')])
+    const localLogger = mergedFakeDeps.loggerOptions.localLogger.mock.calls[0][0]
+
+    expect(localLogger).toContain('Fake error')
+  })
 })
 
 describe('Syslog severity testing', () => {
