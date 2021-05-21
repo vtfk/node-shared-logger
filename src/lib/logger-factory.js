@@ -1,3 +1,5 @@
+const getMessage = require('./get-message')
+
 function _loggerFactory (level, message,
   {
     formatDateTime,
@@ -35,7 +37,7 @@ function _loggerFactory (level, message,
     }
   }
 
-  messageArray = messageArray.map(msg => typeof msg === 'object' ? msg instanceof Error ? msg[loggerOptions.error.property] : JSON.stringify(msg) : msg)
+  messageArray = messageArray.map(msg => getMessage(msg, loggerOptions.error.property))
   const messageFormats = formatLogMessage(formatDateTime, pkg, logLevel, messageArray)
 
   const shouldLogToRemote = (loggerOptions.logToRemote && !(!inProduction && loggerOptions.onlyInProd)) || false
