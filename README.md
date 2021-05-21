@@ -62,7 +62,7 @@ const { logger } = require('@vtfk/logger')
 logger('info', ['test', 'message'])
 ```
 
-#### Ex. Basic with preifx
+#### Ex. Basic with prefix
 Use logConfig to display a UID infront of each message
 ```js
 const { logConfig, logger } = require('@vtfk/logger')
