@@ -38,6 +38,9 @@ const options = {
   },
   prefix: '',                   // A string that will be added in front of each log message (ex. UID for each run)
   suffix: '',                   // A string that will be added at the end of each log message
+  error: {                      // Options for logging out Error object. If undefined; stack from Error object will be returned
+    useMessage: true            // If true; use message from Error object instead of stack
+  }
   localLogger: console.log      // Replace the local logger with a custom function (Default: console.log)
 }
 
@@ -60,6 +63,41 @@ The least amount of code to log to console or a remote syslog aggregator (if opt
 const { logger } = require('@vtfk/logger')
 
 logger('info', ['test', 'message'])
+```
+
+#### Ex. Basic with specifying Error property
+Use logConfig to instruct that message property is used from Error objects
+```js
+const { logConfig, logger } = require('@vtfk/logger')
+
+logConfig({
+  error: {
+    useMessage: true
+  }
+})
+
+logger('info', ['test', 'message'])
+
+logger('warn', ['another', 'action', new Error('Ups. Something happend)])
+
+// OUTPUT 
+// NAME-OF-APP and VER-OF-APP is the value of "name" and "version" in your package.json
+[ 2019-05-19 15:41:17 ] < INFO >  {NAME-OF-APP} - {VER-OF-APP}: - test - message
+[ 2019-05-19 15:41:17 ] < WARN >  {NAME-OF-APP} - {VER-OF-APP}: - another - action - Ups. Something happend
+```
+
+#### Ex. Basic without specifying Error property
+```js
+const { logger } = require('@vtfk/logger')
+
+logger('info', ['test', 'message'])
+
+logger('warn', ['another', 'action', new Error('Ups. Something happend)])
+
+// OUTPUT 
+// NAME-OF-APP and VER-OF-APP is the value of "name" and "version" in your package.json
+[ 2019-05-19 15:41:17 ] < INFO >  {NAME-OF-APP} - {VER-OF-APP}: - test - message
+[ 2019-05-19 15:41:17 ] < WARN >  {NAME-OF-APP} - {VER-OF-APP}: - another - action - Error: Ups. Something happend\n
 ```
 
 #### Ex. Basic with prefix
