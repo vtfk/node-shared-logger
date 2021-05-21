@@ -76,6 +76,16 @@ describe('Checking client creation', () => {
     expect(fakeDeps.loggerOptions.logToRemote).toBeFalsy()
   })
 
+  it('sets error if defined', () => {
+    const { fakeDeps } = createLogConfig({}, {
+      error: {
+        useMessage: true
+      }
+    })
+
+    expect(fakeDeps.loggerOptions.error.useMessage).toBe(true)
+  })
+
   it('sets prefix if defined', () => {
     const { fakeDeps } = createLogConfig({}, {
       prefix: 'my-prefix'
