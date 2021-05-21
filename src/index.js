@@ -41,7 +41,7 @@ const loggerDeps = {
  * @param {string}    [options.remote.serviceAppname="default:"]   The identificator of this application (defaults to "default:" for consistency with Winston)
  * @param {string}    [options.prefix]                    A string that will be added in front of each log message (ex. UID for each run)
  * @param {string}    [options.suffix]                    A string that will be added at the end of each log message
- * @param {string}    [options.error.useMessage]          Use message property on error objects, if not set stack property will be used
+ * @param {string}    [options.error.useMessage]          Use message property on error objects. If undefined; stack property will be used
  * @param {function}  [options.localLogger=console.log]   Replace the local logger with a custom function (Default: console.log)
  * @returns {void}
  */
