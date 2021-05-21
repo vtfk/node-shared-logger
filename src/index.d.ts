@@ -34,5 +34,8 @@ declare module '@vtfk/logger' {
     prefix?: string
     suffix?: string
     localLogger?: (message: any) => void
+    error?: {
+      useMessage?: boolean
+    }
   }
 }

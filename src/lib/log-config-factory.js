@@ -46,6 +46,7 @@ function _logConfigFactory (options = {},
       typeof options.remote.serviceHostname === 'string'
   }
 
+  loggerOptions.error = typeof options.error === 'object' ? options.error : undefined
   loggerOptions.prefix = typeof options.prefix === 'string' ? options.prefix : undefined
   loggerOptions.suffix = typeof options.suffix === 'string' ? options.suffix : undefined
 
