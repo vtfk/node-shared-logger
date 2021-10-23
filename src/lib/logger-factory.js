@@ -1,13 +1,6 @@
 const getMessage = require('./get-message')
 
-function _loggerFactory (level, message,
-  {
-    formatDateTime,
-    logLevelMapper,
-    loggerOptions,
-    pkg,
-    inProduction
-  }) {
+function _loggerFactory (level, message, { formatDateTime, logLevelMapper, loggerOptions, pkg, inProduction }) {
   let messageArray = Array.isArray(message) ? message : [message]
   let logLevel = logLevelMapper(level)
 

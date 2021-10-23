@@ -1,28 +1,14 @@
-function _logConfigFactory (options = {},
-  {
-    syslog,
-    deepmerge,
-    loggerOptions,
-    envVariables
-  }) {
+function _logConfigFactory (options = {}, { syslog, deepmerge, loggerOptions, envVariables }) {
   options = deepmerge(loggerOptions.previousOptions, options)
   loggerOptions.previousOptions = options
-  if (
-    (!options || !options.remote) &&
-    envVariables.PAPERTRAIL_HOST &&
-    envVariables.PAPERTRAIL_PORT &&
-    envVariables.PAPERTRAIL_HOSTNAME
-  ) {
+  if ((!options || !options.remote) && envVariables.PAPERTRAIL_HOST && envVariables.PAPERTRAIL_PORT && envVariables.PAPERTRAIL_HOSTNAME ) {
     options.remote = {
       host: envVariables.PAPERTRAIL_HOST,
       port: envVariables.PAPERTRAIL_PORT,
       serviceHostname: envVariables.PAPERTRAIL_HOSTNAME
     }
   }
-  if (
-    options && typeof options === 'object' &&
-    options.remote && typeof options.remote === 'object'
-  ) {
+  if (options && typeof options === 'object' && options.remote && typeof options.remote === 'object') {
     options.remote.host = options.remote.host || envVariables.PAPERTRAIL_HOST
     options.remote.port = options.remote.port || envVariables.PAPERTRAIL_PORT
     options.remote.serviceHostname = options.remote.serviceHostname || envVariables.PAPERTRAIL_HOSTNAME
