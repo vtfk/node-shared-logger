@@ -1,4 +1,4 @@
-const getMessage = require('./get-message')
+const getMessage = require('../../src/lib/get-message')
 
 const testOne = { objOne: 'First obj', objTwo: 'Second obj' }
 const testTwo = 123

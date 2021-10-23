@@ -1,4 +1,4 @@
-const { _inProductionFactory } = require('./in-production')
+const { _inProductionFactory } = require('../../src/lib/in-production')
 
 describe('Checking if it returns correct value', () => {
   it('returns false when string is NOT \'production\'', () => {

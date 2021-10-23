@@ -1,4 +1,4 @@
-const { pkg, _getPkgFactory } = require('./get-package-json')
+const { pkg, _getPkgFactory } = require('../../src/lib/get-package-json')
 
 describe('Testing root package.json path', () => {
   it('correct types', () => {

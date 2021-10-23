@@ -1,5 +1,5 @@
 const deepmerge = require('deepmerge')
-const logConfigFactory = require('./log-config-factory')
+const logConfigFactory = require('../../src/lib/log-config-factory')
 
 function createLogConfig (fakeDeps, options) {
   const mergedFakeDeps = {

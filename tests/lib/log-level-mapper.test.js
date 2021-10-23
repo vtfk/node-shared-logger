@@ -1,4 +1,4 @@
-const levelMapper = require('./log-level-mapper')
+const levelMapper = require('../../src/lib/log-level-mapper')
 
 describe('Checking if it returns correct value based on level', () => {
   const levels = [

@@ -1,4 +1,4 @@
-const formatDateTime = require('./format-date-time')
+const formatDateTime = require('../../src/lib/format-date-time')
 
 describe('Date & time format testing', () => {
   const testDates = [

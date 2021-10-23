@@ -1,4 +1,4 @@
-const { _envVariablesFactory } = require('./env-variables')
+const { _envVariablesFactory } = require('../../src/lib/env-variables')
 
 describe('Checking if it returns correct value', () => {
   it('returns the same values passed in', () => {

@@ -1,4 +1,4 @@
-let index = require('./index')
+let index = require('../src/index')
 
 describe('Checking for errors in index', () => {
   it('returns an object', () => {
@@ -39,13 +39,13 @@ describe('Testing returned functions', () => {
     }
     // Make sure it uses these env variables
     jest.resetModules()
-    index = require('./index')
+    index = require('../src/index')
 
     expect(index.logger('info', ['test', 'message'])).toBe(true)
     process.env = oldEnvs
 
     jest.resetModules()
-    index = require('./index')
+    index = require('../src/index')
   })
 
   it('does not log to remote if NODE_ENV !== produciton', () => {
@@ -60,13 +60,13 @@ describe('Testing returned functions', () => {
     }
     // Make sure it uses these env variables
     jest.resetModules()
-    index = require('./index')
+    index = require('../src/index')
 
     expect(index.logger('info', ['test', 'message'])).toBe(false)
     process.env = oldEnvs
 
     jest.resetModules()
-    index = require('./index')
+    index = require('../src/index')
   })
 
   it('does not log to remote if NODE_ENV is undefined', () => {
@@ -80,12 +80,12 @@ describe('Testing returned functions', () => {
     }
     // Make sure it uses these env variables
     jest.resetModules()
-    index = require('./index')
+    index = require('../src/index')
 
     expect(index.logger('info', ['test', 'message'])).toBe(false)
     process.env = oldEnvs
 
     jest.resetModules()
-    index = require('./index')
+    index = require('../src/index')
   })
 })
