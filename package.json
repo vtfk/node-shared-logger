@@ -19,6 +19,13 @@
   "bugs": "https://github.com/vtfk/node-shared-logger/issues",
   "homepage": "https://github.com/vtfk/node-shared-logger#readme",
   "author": "Ingar Helgesen (https://github.com/sherex)",
+  "contributors": [
+    {
+      "name": "Rune Moskvil Lyngås",
+      "email": "rune.moskvil.lyngaas@vtfk.no",
+      "url": "https://github.com/runely"
+    }
+  ],
   "license": "MIT",
   "dependencies": {
     "deepmerge": "^4.2.2",
