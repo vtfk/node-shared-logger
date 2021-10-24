@@ -78,7 +78,7 @@ logConfig({
 
 logger('info', ['test', 'message'])
 
-logger('warn', ['another', 'action', new Error('Ups. Something happend)])
+logger('warn', ['another', 'action', new Error('Ups. Something happend')])
 
 // OUTPUT 
 // NAME-OF-APP and VER-OF-APP is the value of "name" and "version" in your package.json
@@ -92,7 +92,7 @@ const { logger } = require('@vtfk/logger')
 
 logger('info', ['test', 'message'])
 
-logger('warn', ['another', 'action', new Error('Ups. Something happend)])
+logger('warn', ['another', 'action', new Error('Ups. Something happend')])
 
 // OUTPUT 
 // NAME-OF-APP and VER-OF-APP is the value of "name" and "version" in your package.json
