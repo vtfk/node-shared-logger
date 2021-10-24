@@ -1,27 +1,33 @@
 const levelMapper = {
   error: {
     severity: 0,
-    azureLevel: 'error'
+    azureLevel: 'error',
+    winstonLevel: 'err'
   },
   warn: {
     severity: 1,
-    azureLevel: 'warn'
+    azureLevel: 'warn',
+    winstonLevel: 'warning'
   },
   info: {
     severity: 2,
-    azureLevel: 'info'
+    azureLevel: 'info',
+    winstonLevel: 'info'
   },
   verbose: {
     severity: 3,
-    azureLevel: 'verbose'
+    azureLevel: 'verbose',
+    winstonLevel: 'notice'
   },
   debug: {
     severity: 4,
-    azureLevel: 'verbose'
+    azureLevel: 'verbose',
+    winstonLevel: 'debug'
   },
   silly: {
     severity: 5,
-    azureLevel: 'verbose'
+    azureLevel: 'verbose',
+    winstonLevel: 'crit'
   }
 }
 
@@ -35,7 +41,8 @@ module.exports = (level) => {
         severity: mappedLevel.severity,
         level: level.toUpperCase(),
         padding: ' '.repeat(longestLevelString.length - level.length),
-        azureLevel: mappedLevel.azureLevel
+        azureLevel: mappedLevel.azureLevel,
+        winstonLevel: mappedLevel.winstonLevel
       }
     }
   } catch (error) {

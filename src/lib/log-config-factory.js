@@ -13,13 +13,23 @@ function _logConfigFactory (options = {}, { syslog, deepmerge, loggerOptions, en
     options.remote.port = options.remote.port || envVariables.PAPERTRAIL_PORT
     options.remote.serviceHostname = options.remote.serviceHostname || envVariables.PAPERTRAIL_HOSTNAME
     options.remote.serviceAppname = options.remote.serviceAppname || envVariables.PAPERTRAIL_APPNAME || 'default:'
+    options.remote.protocol = options.remote.protocol || envVariables.PAPERTRAIL_PROTOCOL || 'tls4' // can be any of: tcp4, udp4, tls4, unix, unix-connect
 
-    loggerOptions.remoteLogger = syslog.createClient(options.remote.host, {
-      port: options.remote.port,
-      syslogHostname: options.remote.serviceHostname,
-      appName: options.remote.serviceAppname,
-      transport: syslog.Transport.Udp,
-      rfc3164: false // Use RFC5424
+    loggerOptions.remoteLogger = syslog.createLogger({
+      format: syslog.format.printf(({ message }) => { // https://github.com/winstonjs/winston#formats
+        return `${message}`
+      }),
+      levels: syslog.config.syslog.levels,
+      transports: [
+        new syslog.transports.Syslog({
+          host: options.remote.host,
+          port: options.remote.port,
+          localhost: options.remote.serviceHostname,
+          app_name: options.remote.serviceAppname,
+          protocol: options.remote.protocol,
+          eol: '\n'
+        })
+      ]
     })
 
     // onlyInProd defaults to true

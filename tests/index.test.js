@@ -37,8 +37,29 @@ describe('Testing returned functions', () => {
       PAPERTRAIL_HOSTNAME: 'envApp',
       PAPERTRAIL_APPNAME: 'testApp'
     }
-    // Make sure it uses these env variables
+    // Make sure it uses these env variables and a mocked winston
     jest.resetModules()
+    jest.mock('winston', () => ({
+      format: {
+        simple: jest.fn(),
+        printf: jest.fn(({ message }) => { return message })
+      },
+      config: {
+        syslog: {
+          levels: []
+        }
+      },
+      createLogger: jest.fn().mockReturnValue({
+        debug: jest.fn(),
+        log: jest.fn()
+      }),
+      transports: {
+        Syslog: jest.fn()
+      }
+    }))
+    jest.mock('winston-syslog', () => ({
+      Syslog: jest.fn()
+    }))
     index = require('../src/index')
 
     expect(index.logger('info', ['test', 'message'])).toBe(true)
@@ -58,8 +79,29 @@ describe('Testing returned functions', () => {
       PAPERTRAIL_HOSTNAME: 'envApp',
       PAPERTRAIL_APPNAME: 'testApp'
     }
-    // Make sure it uses these env variables
+    // Make sure it uses these env variables and a mocked winston
     jest.resetModules()
+    jest.mock('winston', () => ({
+      format: {
+        simple: jest.fn(),
+        printf: jest.fn(({ message }) => { return message })
+      },
+      config: {
+        syslog: {
+          levels: []
+        }
+      },
+      createLogger: jest.fn().mockReturnValue({
+        debug: jest.fn(),
+        log: jest.fn()
+      }),
+      transports: {
+        Syslog: jest.fn()
+      }
+    }))
+    jest.mock('winston-syslog', () => ({
+      Syslog: jest.fn()
+    }))
     index = require('../src/index')
 
     expect(index.logger('info', ['test', 'message'])).toBe(false)
@@ -78,8 +120,29 @@ describe('Testing returned functions', () => {
       PAPERTRAIL_HOSTNAME: 'envApp',
       PAPERTRAIL_APPNAME: 'testApp'
     }
-    // Make sure it uses these env variables
+    // Make sure it uses these env variables and a mocked winston
     jest.resetModules()
+    jest.mock('winston', () => ({
+      format: {
+        simple: jest.fn(),
+        printf: jest.fn(({ message }) => { return message })
+      },
+      config: {
+        syslog: {
+          levels: []
+        }
+      },
+      createLogger: jest.fn().mockReturnValue({
+        debug: jest.fn(),
+        log: jest.fn()
+      }),
+      transports: {
+        Syslog: jest.fn()
+      }
+    }))
+    jest.mock('winston-syslog', () => ({
+      Syslog: jest.fn()
+    }))
     index = require('../src/index')
 
     expect(index.logger('info', ['test', 'message'])).toBe(false)

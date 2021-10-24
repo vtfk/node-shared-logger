@@ -57,3 +57,21 @@ describe('Checking if it returns correct azureLevel', () => {
     })
   })
 })
+
+describe('Checking if it returns correct winstonLevel', () => {
+  const levels = [
+    { string: 'error', winstonLevel: 'err' },
+    { string: 'warn', winstonLevel: 'warning' },
+    { string: 'info', winstonLevel: 'info' },
+    { string: 'verbose', winstonLevel: 'notice' },
+    { string: 'debug', winstonLevel: 'debug' },
+    { string: 'silly', winstonLevel: 'crit' },
+    { string: 'INfo', winstonLevel: 'info' },
+    { string: 'SILLY', winstonLevel: 'crit' }
+  ]
+  levels.forEach(level => {
+    it(`returns winstonLevel: '${level.winstonLevel}', when given string '${level.string}'`, () => {
+      expect(levelMapper(level.string).winstonLevel).toBe(level.winstonLevel)
+    })
+  })
+})

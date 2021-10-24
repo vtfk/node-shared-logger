@@ -31,6 +31,7 @@ const options = {
     port: '',                   // Port for the remote aggregator
     serviceHostname: '',        // The identificator of this service
     serviceAppname: 'default:'  // The identificator of this application (defaults to "default:" for consistency with Winston)
+    protocol: 'tls4'            // The protocol used for remote logging. Can be any of tcp4, udp4, tls4, unix, unix-connect
   },
   azure: {                      // Options for Azure
     context: context,           // The context object received from an Azure Function (see example further down)
@@ -49,10 +50,11 @@ logConfig(options)
 
 
 ### ENV Variables
-```
+```bash
 PAPERTRAIL_HOST = papertrail.example.com
 PAPERTRAIL_PORT = 5050
 PAPERTRAIL_HOSTNAME = Cool-app
+PAPERTRAIL_APPNAME = MyCoolApp # used if one wants to set identificator of this application to something other than default (default:)
 ```
 `logConfig()` options take priority.
 

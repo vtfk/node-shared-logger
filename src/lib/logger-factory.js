@@ -35,7 +35,7 @@ function _loggerFactory (level, message, { formatDateTime, logLevelMapper, logge
 
   const shouldLogToRemote = (loggerOptions.logToRemote && !(!inProduction && loggerOptions.onlyInProd)) || false
   try {
-    if (shouldLogToRemote) loggerOptions.remoteLogger.log(messageFormats.remoteLogMessage, { severity: logLevel.severity })
+    if (shouldLogToRemote) loggerOptions.remoteLogger.log(logLevel.winstonLevel, messageFormats.remoteLogMessage)
   } catch (error) {
     const warnLevel = logLevelMapper('warn')
     const errorMessage = formatLogMessage(formatDateTime, pkg, warnLevel, ['logger-factory', 'logToRemote', 'error', error.message])

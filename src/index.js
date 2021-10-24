@@ -1,4 +1,5 @@
-const syslog = require('syslog-client')
+const syslog = require('winston')
+require('winston-syslog').Syslog // eslint-disable-line
 const deepmerge = require('deepmerge')
 const logLevelMapper = require('./lib/log-level-mapper')
 const formatDateTime = require('./lib/format-date-time')

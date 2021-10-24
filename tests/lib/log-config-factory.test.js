@@ -1,14 +1,28 @@
 const deepmerge = require('deepmerge')
 const logConfigFactory = require('../../src/lib/log-config-factory')
 
+jest.mock('winston', () => ({
+  format: {
+    simple: jest.fn(),
+    printf: jest.fn(({ message }) => { return message })
+  },
+  config: {
+    syslog: {
+      levels: []
+    }
+  },
+  createLogger: jest.fn().mockReturnValue({
+    debug: jest.fn(),
+    log: jest.fn()
+  }),
+  transports: {
+    Syslog: jest.fn()
+  }
+}))
+
 function createLogConfig (fakeDeps, options) {
   const mergedFakeDeps = {
-    syslog: {
-      createClient: jest.fn((host, options) => ({})),
-      Transport: {
-        Udp: 'udp'
-      }
-    },
+    syslog: require('winston'),
     deepmerge,
     loggerOptions: {},
     envVariables: {},
@@ -35,18 +49,20 @@ describe('Checking client creation', () => {
       remote: {
         host: 'example.com',
         port: '8080',
-        serviceHostname: 'myApp'
+        serviceHostname: 'myApp',
+        serviceAppname: 'default:',
+        protocol: 'tcp4'
       }
     })
 
-    const logConfigStats = fakeDeps.syslog.createClient.mock.calls[0]
-    expect(logConfigStats[0]).toBe('example.com')
-    expect(logConfigStats[1]).toMatchObject({
+    const logConfigStats = fakeDeps.loggerOptions.previousOptions.remote
+    expect(logConfigStats).toMatchObject({
+      host: 'example.com',
       port: '8080',
-      syslogHostname: 'myApp',
-      appName: 'default:',
-      transport: 'udp',
-      rfc3164: false
+      serviceHostname: 'myApp',
+      serviceAppname: 'default:',
+      protocol: 'tcp4',
+      onlyInProd: true
     })
     expect(fakeDeps.loggerOptions.logToRemote).toBeTruthy()
   })
@@ -124,18 +140,19 @@ describe('Checking client creation', () => {
         PAPERTRAIL_HOST: 'env.example.com',
         PAPERTRAIL_PORT: '8081',
         PAPERTRAIL_HOSTNAME: 'envApp',
-        PAPERTRAIL_APPNAME: 'testApp'
+        PAPERTRAIL_APPNAME: 'testApp',
+        PAPERTRAIL_PROTOCOL: 'tcp4'
       }
     }, {})
 
-    const logConfigStats = fakeDeps.syslog.createClient.mock.calls[0]
-    expect(logConfigStats[0]).toBe('env.example.com')
-    expect(logConfigStats[1]).toMatchObject({
+    const logConfigStats = fakeDeps.loggerOptions.previousOptions.remote
+    expect(logConfigStats).toMatchObject({
+      host: 'env.example.com',
       port: '8081',
-      syslogHostname: 'envApp',
-      appName: 'testApp',
-      transport: 'udp',
-      rfc3164: false
+      serviceHostname: 'envApp',
+      serviceAppname: 'testApp',
+      protocol: 'tcp4',
+      onlyInProd: true
     })
   })
 
@@ -155,14 +172,14 @@ describe('Checking client creation', () => {
       }
     })
 
-    const logConfigStats = fakeDeps.syslog.createClient.mock.calls[0]
-    expect(logConfigStats[0]).toBe('example.com')
-    expect(logConfigStats[1]).toMatchObject({
+    const logConfigStats = fakeDeps.loggerOptions.previousOptions.remote
+    expect(logConfigStats).toMatchObject({
+      host: 'example.com',
       port: '8080',
-      syslogHostname: 'myApp',
-      appName: 'testApp',
-      transport: 'udp',
-      rfc3164: false
+      serviceHostname: 'myApp',
+      serviceAppname: 'testApp',
+      protocol: 'tls4',
+      onlyInProd: true
     })
   })
 
@@ -181,14 +198,13 @@ describe('Checking client creation', () => {
       }
     })
 
-    const logConfigStats = fakeDeps.syslog.createClient.mock.calls[0]
-    expect(logConfigStats[0]).toBe('env.example.com')
-    expect(logConfigStats[1]).toMatchObject({
+    const logConfigStats = fakeDeps.loggerOptions.previousOptions.remote
+    expect(logConfigStats).toMatchObject({
       port: '8080',
-      syslogHostname: 'myApp',
-      appName: 'testApp',
-      transport: 'udp',
-      rfc3164: false
+      serviceHostname: 'myApp',
+      serviceAppname: 'testApp',
+      protocol: 'tls4',
+      onlyInProd: true
     })
   })
 
@@ -207,14 +223,13 @@ describe('Checking client creation', () => {
       }
     })
 
-    const logConfigStats = fakeDeps.syslog.createClient.mock.calls[0]
-    expect(logConfigStats[0]).toBe('example.com')
-    expect(logConfigStats[1]).toMatchObject({
-      port: '8081',
-      syslogHostname: 'myApp',
-      appName: 'testApp',
-      transport: 'udp',
-      rfc3164: false
+    const logConfigStats = fakeDeps.loggerOptions.previousOptions.remote
+    expect(logConfigStats).toMatchObject({
+      host: 'example.com',
+      serviceHostname: 'myApp',
+      serviceAppname: 'testApp',
+      protocol: 'tls4',
+      onlyInProd: true
     })
   })
 
@@ -233,14 +248,14 @@ describe('Checking client creation', () => {
       }
     })
 
-    const logConfigStats = fakeDeps.syslog.createClient.mock.calls[0]
-    expect(logConfigStats[0]).toBe('example.com')
-    expect(logConfigStats[1]).toMatchObject({
+    const logConfigStats = fakeDeps.loggerOptions.previousOptions.remote
+    expect(logConfigStats).toMatchObject({
+      host: 'example.com',
       port: '8080',
-      syslogHostname: 'envApp',
-      appName: 'testApp',
-      transport: 'udp',
-      rfc3164: false
+      serviceHostname: 'envApp',
+      serviceAppname: 'testApp',
+      protocol: 'tls4',
+      onlyInProd: true
     })
   })
 

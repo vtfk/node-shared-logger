@@ -18,6 +18,7 @@ declare module '@vtfk/logger' {
       port?: string
       serviceHostname?: string
       serviceAppname?: string
+      protocol?: string
     }
     azure?: {
       context?: {
