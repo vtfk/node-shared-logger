@@ -1,5 +1,4 @@
-const syslog = require('winston')
-require('winston-syslog').Syslog // eslint-disable-line
+const axios = require('axios').default
 const deepmerge = require('deepmerge')
 const logLevelMapper = require('./lib/log-level-mapper')
 const formatDateTime = require('./lib/format-date-time')
@@ -16,7 +15,7 @@ const loggerOptions = {
 
 // Dependencies for the imported factory functions
 const logConfigDeps = {
-  syslog,
+  axios,
   deepmerge,
   loggerOptions,
   envVariables: process.env
@@ -36,10 +35,8 @@ const loggerDeps = {
  * @param {object}    [options]                           Options for logging
  * @param {object}    [options.remote]                    Options for remote logging. If undefined; disables remote logging
  * @param {boolean}   [options.remote.onlyInProd=true]    If true; only log to remote aggregator when NODE_ENV === 'production'
- * @param {string}    [options.remote.host]               Hostname for the remote aggregator
- * @param {string}    [options.remote.port]               Port for the remote aggregator
- * @param {string}    [options.remote.serviceHostname]    The identificator of this service
- * @param {string}    [options.remote.serviceAppname="default:"]   The identificator of this application (defaults to "default:" for consistency with Winston)
+ * @param {string}    [options.remote.host]               Host for the remote aggregator
+ * @param {string}    [options.remote.token]              Token for the remote aggregator
  * @param {string}    [options.prefix]                    A string that will be added in front of each log message (ex. UID for each run)
  * @param {string}    [options.suffix]                    A string that will be added at the end of each log message
  * @param {string}    [options.error.useMessage]          Use message property on error objects. If undefined; stack property will be used

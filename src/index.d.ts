@@ -15,10 +15,7 @@ declare module '@vtfk/logger' {
       disabled?: boolean
       onlyInProd?: boolean
       host?: string
-      port?: string
-      serviceHostname?: string
-      serviceAppname?: string
-      protocol?: string
+      token?: string
     }
     azure?: {
       context?: {
