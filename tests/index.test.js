@@ -33,33 +33,11 @@ describe('Testing returned functions', () => {
       ...process.env,
       NODE_ENV: 'production',
       PAPERTRAIL_HOST: 'env.example.com',
-      PAPERTRAIL_PORT: '8081',
-      PAPERTRAIL_HOSTNAME: 'envApp',
-      PAPERTRAIL_APPNAME: 'testApp'
+      PAPERTRAIL_TOKEN: '4567890'
     }
-    // Make sure it uses these env variables and a mocked winston
+    // Make sure it uses these env variables and a mocked axios
     jest.resetModules()
-    jest.mock('winston', () => ({
-      format: {
-        simple: jest.fn(),
-        printf: jest.fn(({ message }) => { return message })
-      },
-      config: {
-        syslog: {
-          levels: []
-        }
-      },
-      createLogger: jest.fn().mockReturnValue({
-        debug: jest.fn(),
-        log: jest.fn()
-      }),
-      transports: {
-        Syslog: jest.fn()
-      }
-    }))
-    jest.mock('winston-syslog', () => ({
-      Syslog: jest.fn()
-    }))
+    jest.mock('axios')
     index = require('../src/index')
 
     expect(index.logger('info', ['test', 'message'])).toBe(true)
@@ -75,33 +53,11 @@ describe('Testing returned functions', () => {
       ...process.env,
       NODE_ENV: 'dev',
       PAPERTRAIL_HOST: 'env.example.com',
-      PAPERTRAIL_PORT: '8081',
-      PAPERTRAIL_HOSTNAME: 'envApp',
-      PAPERTRAIL_APPNAME: 'testApp'
+      PAPERTRAIL_TOKEN: '4567890'
     }
-    // Make sure it uses these env variables and a mocked winston
+    // Make sure it uses these env variables and a mocked axios
     jest.resetModules()
-    jest.mock('winston', () => ({
-      format: {
-        simple: jest.fn(),
-        printf: jest.fn(({ message }) => { return message })
-      },
-      config: {
-        syslog: {
-          levels: []
-        }
-      },
-      createLogger: jest.fn().mockReturnValue({
-        debug: jest.fn(),
-        log: jest.fn()
-      }),
-      transports: {
-        Syslog: jest.fn()
-      }
-    }))
-    jest.mock('winston-syslog', () => ({
-      Syslog: jest.fn()
-    }))
+    jest.mock('axios')
     index = require('../src/index')
 
     expect(index.logger('info', ['test', 'message'])).toBe(false)
@@ -116,33 +72,11 @@ describe('Testing returned functions', () => {
     process.env = {
       ...process.env,
       PAPERTRAIL_HOST: 'env.example.com',
-      PAPERTRAIL_PORT: '8081',
-      PAPERTRAIL_HOSTNAME: 'envApp',
-      PAPERTRAIL_APPNAME: 'testApp'
+      PAPERTRAIL_TOKEN: '4567890'
     }
-    // Make sure it uses these env variables and a mocked winston
+    // Make sure it uses these env variables and a mocked axios
     jest.resetModules()
-    jest.mock('winston', () => ({
-      format: {
-        simple: jest.fn(),
-        printf: jest.fn(({ message }) => { return message })
-      },
-      config: {
-        syslog: {
-          levels: []
-        }
-      },
-      createLogger: jest.fn().mockReturnValue({
-        debug: jest.fn(),
-        log: jest.fn()
-      }),
-      transports: {
-        Syslog: jest.fn()
-      }
-    }))
-    jest.mock('winston-syslog', () => ({
-      Syslog: jest.fn()
-    }))
+    jest.mock('axios')
     index = require('../src/index')
 
     expect(index.logger('info', ['test', 'message'])).toBe(false)

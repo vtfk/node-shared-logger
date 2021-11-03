@@ -1,28 +1,11 @@
 const deepmerge = require('deepmerge')
 const logConfigFactory = require('../../src/lib/log-config-factory')
 
-jest.mock('winston', () => ({
-  format: {
-    simple: jest.fn(),
-    printf: jest.fn(({ message }) => { return message })
-  },
-  config: {
-    syslog: {
-      levels: []
-    }
-  },
-  createLogger: jest.fn().mockReturnValue({
-    debug: jest.fn(),
-    log: jest.fn()
-  }),
-  transports: {
-    Syslog: jest.fn()
-  }
-}))
+jest.mock('axios')
 
 function createLogConfig (fakeDeps, options) {
   const mergedFakeDeps = {
-    syslog: require('winston'),
+    axios: require('axios'),
     deepmerge,
     loggerOptions: {},
     envVariables: {},
@@ -48,20 +31,14 @@ describe('Checking client creation', () => {
     const { fakeDeps } = createLogConfig({}, {
       remote: {
         host: 'example.com',
-        port: '8080',
-        serviceHostname: 'myApp',
-        serviceAppname: 'default:',
-        protocol: 'tcp4'
+        token: '45678'
       }
     })
 
     const logConfigStats = fakeDeps.loggerOptions.previousOptions.remote
     expect(logConfigStats).toMatchObject({
       host: 'example.com',
-      port: '8080',
-      serviceHostname: 'myApp',
-      serviceAppname: 'default:',
-      protocol: 'tcp4',
+      token: '45678',
       onlyInProd: true
     })
     expect(fakeDeps.loggerOptions.logToRemote).toBeTruthy()
@@ -70,9 +47,7 @@ describe('Checking client creation', () => {
   it('sets logToRemote as false on wrong config', () => {
     const { fakeDeps } = createLogConfig({}, {
       remote: {
-        host: 'example.com',
-        port: '8080',
-        serviceHostname: 123
+        host: 'example.com'
       }
     })
 
@@ -84,8 +59,7 @@ describe('Checking client creation', () => {
       remote: {
         disabled: true,
         host: 'example.com',
-        port: '8080',
-        serviceHostname: 'myApp'
+        token: '45678'
       }
     })
 
@@ -118,7 +92,7 @@ describe('Checking client creation', () => {
     expect(fakeDeps.loggerOptions.suffix).toBe('my-suffix')
   })
 
-  it('assings localLogger to options if function', () => {
+  it('assigns localLogger to options if function', () => {
     const { fakeDeps } = createLogConfig({}, {
       localLogger: () => {}
     })
@@ -126,7 +100,7 @@ describe('Checking client creation', () => {
     expect(fakeDeps.loggerOptions.localLogger).toBeFunction()
   })
 
-  it('does not assing localLogger to options if not a function', () => {
+  it('does not assign localLogger to options if not a function', () => {
     const { fakeDeps } = createLogConfig({}, {
       localLogger: 'not a function'
     })
@@ -138,20 +112,14 @@ describe('Checking client creation', () => {
     const { fakeDeps } = createLogConfig({
       envVariables: {
         PAPERTRAIL_HOST: 'env.example.com',
-        PAPERTRAIL_PORT: '8081',
-        PAPERTRAIL_HOSTNAME: 'envApp',
-        PAPERTRAIL_APPNAME: 'testApp',
-        PAPERTRAIL_PROTOCOL: 'tcp4'
+        PAPERTRAIL_TOKEN: '4567'
       }
     }, {})
 
     const logConfigStats = fakeDeps.loggerOptions.previousOptions.remote
     expect(logConfigStats).toMatchObject({
       host: 'env.example.com',
-      port: '8081',
-      serviceHostname: 'envApp',
-      serviceAppname: 'testApp',
-      protocol: 'tcp4',
+      token: '4567',
       onlyInProd: true
     })
   })
@@ -160,25 +128,19 @@ describe('Checking client creation', () => {
     const { fakeDeps } = createLogConfig({
       envVariables: {
         PAPERTRAIL_HOST: 'env.example.com',
-        PAPERTRAIL_PORT: '8081',
-        PAPERTRAIL_HOSTNAME: 'envApp',
-        PAPERTRAIL_APPNAME: 'testApp'
+        PAPERTRAIL_TOKEN: '4567'
       }
     }, {
       remote: {
         host: 'example.com',
-        port: '8080',
-        serviceHostname: 'myApp'
+        token: '45678',
       }
     })
 
     const logConfigStats = fakeDeps.loggerOptions.previousOptions.remote
     expect(logConfigStats).toMatchObject({
       host: 'example.com',
-      port: '8080',
-      serviceHostname: 'myApp',
-      serviceAppname: 'testApp',
-      protocol: 'tls4',
+      token: '45678',
       onlyInProd: true
     })
   })
@@ -187,74 +149,36 @@ describe('Checking client creation', () => {
     const { fakeDeps } = createLogConfig({
       envVariables: {
         PAPERTRAIL_HOST: 'env.example.com',
-        PAPERTRAIL_PORT: '8081',
-        PAPERTRAIL_HOSTNAME: 'envApp',
-        PAPERTRAIL_APPNAME: 'testApp'
+        PAPERTRAIL_TOKEN: '4567'
       }
     }, {
       remote: {
-        port: '8080',
-        serviceHostname: 'myApp'
+        token: '45678'
       }
     })
 
     const logConfigStats = fakeDeps.loggerOptions.previousOptions.remote
     expect(logConfigStats).toMatchObject({
-      port: '8080',
-      serviceHostname: 'myApp',
-      serviceAppname: 'testApp',
-      protocol: 'tls4',
+      token: '45678',
       onlyInProd: true
     })
   })
 
-  it('uses remote if both env variables and remote is defined, no remote.port', () => {
+  it('uses remote if both env variables and remote is defined, no remote.token', () => {
     const { fakeDeps } = createLogConfig({
       envVariables: {
         PAPERTRAIL_HOST: 'env.example.com',
-        PAPERTRAIL_PORT: '8081',
-        PAPERTRAIL_HOSTNAME: 'envApp',
-        PAPERTRAIL_APPNAME: 'testApp'
+        PAPERTRAIL_TOKEN: '4567'
       }
     }, {
       remote: {
-        host: 'example.com',
-        serviceHostname: 'myApp'
+        host: 'example.com'
       }
     })
 
     const logConfigStats = fakeDeps.loggerOptions.previousOptions.remote
     expect(logConfigStats).toMatchObject({
       host: 'example.com',
-      serviceHostname: 'myApp',
-      serviceAppname: 'testApp',
-      protocol: 'tls4',
-      onlyInProd: true
-    })
-  })
-
-  it('uses remote if both env variables and remote is defined, no remote.serviceHostname', () => {
-    const { fakeDeps } = createLogConfig({
-      envVariables: {
-        PAPERTRAIL_HOST: 'env.example.com',
-        PAPERTRAIL_PORT: '8081',
-        PAPERTRAIL_HOSTNAME: 'envApp',
-        PAPERTRAIL_APPNAME: 'testApp'
-      }
-    }, {
-      remote: {
-        host: 'example.com',
-        port: '8080'
-      }
-    })
-
-    const logConfigStats = fakeDeps.loggerOptions.previousOptions.remote
-    expect(logConfigStats).toMatchObject({
-      host: 'example.com',
-      port: '8080',
-      serviceHostname: 'envApp',
-      serviceAppname: 'testApp',
-      protocol: 'tls4',
       onlyInProd: true
     })
   })
@@ -265,8 +189,7 @@ describe('Checking client creation', () => {
       suffix: 'cats',
       remote: {
         host: 'example.com',
-        port: '8080',
-        serviceHostname: 'myApp'
+        token: '4567'
       }
     })
     expect(fakeDeps.loggerOptions.prefix).toBe('kittens')
@@ -294,8 +217,7 @@ describe('Checking client creation', () => {
       prefix: 'very cute kittens',
       remote: {
         host: 'example.com',
-        port: '8080',
-        serviceHostname: 'myApp'
+        token: '4567'
       }
     })
     expect(fakeDeps.loggerOptions.prefix).toBe('very cute kittens')
