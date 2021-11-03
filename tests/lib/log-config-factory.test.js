@@ -133,7 +133,7 @@ describe('Checking client creation', () => {
     }, {
       remote: {
         host: 'example.com',
-        token: '45678',
+        token: '45678'
       }
     })
 
