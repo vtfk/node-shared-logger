@@ -7,7 +7,7 @@
 </div>
 
 <br>
-<p align=center >A simple syslog logger for node applications. Logs to console, remote syslog aggregator and Azure Function.</p>
+<p align=center >A simple logger for node applications. Logs to console, papertrail (via token) and Azure Function.</p>
 <br>
 
 ## Installation
@@ -17,21 +17,22 @@
 ## Usage
 
 ## Config
-All options are optional. Logging to a remote syslog aggregator can be configured in `logConfig()` or as env variables.
+All options are optional.
 
-> Note: `logConfig()` can be called multiple times to update the config throughout the program.  
+Logging to papertrail can be configured in `logConfig()` or as env variables.
+
+Azure Function logging can be configured in `logConfing()`.
+
+> Note: `logConfig()` can be called multiple times to update the config throughout the program.
   And it will keep the previous config parameter if not specified in the next call.
 
 ```js
 const options = {
   remote: {                     // Options for remote logging. If undefined; disables remote logging
     disabled: false,            // If true; disables logging to remote, even if remote config is set
-    onlyInProd: true,           // If true; only log to remote aggregator when NODE_ENV === 'production'
-    host: '',                   // Hostname for the remote aggregator
-    port: '',                   // Port for the remote aggregator
-    serviceHostname: '',        // The identificator of this service
-    serviceAppname: 'default:'  // The identificator of this application (defaults to "default:" for consistency with Winston)
-    protocol: 'tls4'            // The protocol used for remote logging. Can be any of tcp4, udp4, tls4, unix, unix-connect
+    onlyInProd: true,           // If true; only log to remote aggregator when NODE_ENV === 'production' (default is true)
+    host: '',                   // Host for the remote aggregator
+    token: ''                   // Token for the remote aggregator
   },
   azure: {                      // Options for Azure
     context: context,           // The context object received from an Azure Function (see example further down)
@@ -41,7 +42,7 @@ const options = {
   suffix: '',                   // A string that will be added at the end of each log message
   error: {                      // Options for logging out Error object. If undefined; stack from Error object will be returned
     useMessage: true            // If true; use message from Error object instead of stack
-  }
+  },
   localLogger: console.log      // Replace the local logger with a custom function (Default: console.log)
 }
 
@@ -51,16 +52,14 @@ logConfig(options)
 
 ### ENV Variables
 ```bash
-PAPERTRAIL_HOST = papertrail.example.com
-PAPERTRAIL_PORT = 5050
-PAPERTRAIL_HOSTNAME = Cool-app
-PAPERTRAIL_APPNAME = MyCoolApp # used if one wants to set identificator of this application to something other than default (default:)
+PAPERTRAIL_HOST = papertrail.example.com/v1/log
+PAPERTRAIL_TOKEN = jvkuvuyoufyofo8ygo8f609fo7ouyvcio7=
 ```
 `logConfig()` options take priority.
 
 ### Examples
 #### Ex. Basic
-The least amount of code to log to console or a remote syslog aggregator (if options are set in enviroment variables)
+The least amount of code to log to console or a remote aggregator (if options are set in enviroment variables)
 ```js
 const { logger } = require('@vtfk/logger')
 
@@ -84,8 +83,8 @@ logger('warn', ['another', 'action', new Error('Ups. Something happend')])
 
 // OUTPUT 
 // NAME-OF-APP and VER-OF-APP is the value of "name" and "version" in your package.json
-[ 2019-05-19 15:41:17 ] < INFO >  {NAME-OF-APP} - {VER-OF-APP}: - test - message
-[ 2019-05-19 15:41:17 ] < WARN >  {NAME-OF-APP} - {VER-OF-APP}: - another - action - Ups. Something happend
+[ 2019.05.19 15:41:17 ] < INFO >  {NAME-OF-APP} - {VER-OF-APP}: test - message
+[ 2019.05.19 15:41:17 ] < WARN >  {NAME-OF-APP} - {VER-OF-APP}: another - action - Ups. Something happend
 ```
 
 #### Ex. Basic without specifying Error property
@@ -98,8 +97,8 @@ logger('warn', ['another', 'action', new Error('Ups. Something happend')])
 
 // OUTPUT 
 // NAME-OF-APP and VER-OF-APP is the value of "name" and "version" in your package.json
-[ 2019-05-19 15:41:17 ] < INFO >  {NAME-OF-APP} - {VER-OF-APP}: - test - message
-[ 2019-05-19 15:41:17 ] < WARN >  {NAME-OF-APP} - {VER-OF-APP}: - another - action - Error: Ups. Something happend\n
+[ 2019.05.19 15:41:17 ] < INFO >  {NAME-OF-APP} - {VER-OF-APP}: test - message
+[ 2019.05.19 15:41:17 ] < WARN >  {NAME-OF-APP} - {VER-OF-APP}: another - action - Error: Ups. Something happend\n
 ```
 
 #### Ex. Basic with prefix
@@ -118,8 +117,8 @@ logger('warn', ['another', 'action'])
 
 // OUTPUT 
 // NAME-OF-APP and VER-OF-APP is the value of "name" and "version" in your package.json
-[ 2019-05-19 15:41:17 ] < INFO >  {NAME-OF-APP} - {VER-OF-APP}: V01k3pDpHCBkAHPyCvOOl - test - message
-[ 2019-05-19 15:41:17 ] < WARN >  {NAME-OF-APP} - {VER-OF-APP}: V01k3pDpHCBkAHPyCvOOl - another - action
+[ 2019.05.19 15:41:17 ] < INFO >  {NAME-OF-APP} - {VER-OF-APP}: V01k3pDpHCBkAHPyCvOOl - test - message
+[ 2019.05.19 15:41:17 ] < WARN >  {NAME-OF-APP} - {VER-OF-APP}: V01k3pDpHCBkAHPyCvOOl - another - action
 ```
 
 #### Ex. Logging to remote
@@ -131,9 +130,8 @@ const { logConfig, logger } = require('@vtfk/logger')
 logConfig({
   remote: {
     onlyInProd: true,
-    host: 'papertrail.example.com',
-    port: 5050,
-    serviceHostname: 'my-server-name'
+    host: 'papertrail.example.com/v1/log',
+    token: 'jvkuvuyoufyofo8ygo8f609fo7ouyvcio7=',
   }
   prefix: 'prefixedValue',
   suffix: 'suffixedValue'
@@ -146,8 +144,8 @@ logger('error', ['Error in app', error])
 
 // OUTPUT
 // NAME-OF-APP and VER-OF-APP is the value of "name" and "version" in your package.json
-[ 2019-05-19 15:13:35 ] < INFO >  {NAME-OF-APP} - {VER-OF-APP}: prefixedValue - test - message - suffixedValue
-[ 2019-05-19 15:13:35 ] < ERROR >  {NAME-OF-APP} - {VER-OF-APP}: prefixedValue - Error in app - Error: Error in process - suffixedValue
+[ 2019.05.19 15:13:35 ] < INFO >  {NAME-OF-APP} - {VER-OF-APP}: prefixedValue - test - message - suffixedValue
+[ 2019.05.19 15:13:35 ] < ERROR >  {NAME-OF-APP} - {VER-OF-APP}: prefixedValue - Error in app - Error: Error in process - suffixedValue
 ```
 
 #### Ex. Disable logging to remote
@@ -160,9 +158,8 @@ logConfig({
   remote: {
     disabled: true,
     onlyInProd: true,
-    host: 'papertrail.example.com',
-    port: 5050,
-    serviceHostname: 'my-server-name'
+    host: 'papertrail.example.com/v1/log',
+    token: 'jvkuvuyoufyofo8ygo8f609fo7ouyvcio7='
   }
   prefix: 'prefixedValue',
   suffix: 'suffixedValue'
@@ -175,12 +172,12 @@ logger('error', ['Error in app', error])
 
 // OUTPUT
 // NAME-OF-APP and VER-OF-APP is the value of "name" and "version" in your package.json
-[ 2019-05-19 15:13:35 ] < INFO >  {NAME-OF-APP} - {VER-OF-APP}: prefixedValue - test - message - suffixedValue
-[ 2019-05-19 15:13:35 ] < ERROR >  {NAME-OF-APP} - {VER-OF-APP}: prefixedValue - Error in app - Error: Error in process - suffixedValue
+[ 2019.05.19 15:13:35 ] < INFO >  {NAME-OF-APP} - {VER-OF-APP}: prefixedValue - test - message - suffixedValue
+[ 2019.05.19 15:13:35 ] < ERROR >  {NAME-OF-APP} - {VER-OF-APP}: prefixedValue - Error in app - Error: Error in process - suffixedValue
 ```
 
 #### Ex. Azure Function
-Pass the `context` object from Azure Function to add a ìnvocationId and use `context.log[level](message)`.
+Pass the `context` object from Azure Function to add a invocationId and use `context.log[level](message)`.
 > Note: If the `context` object contains all log functions (`context.log[levels]`) then it will log using these instead of `options.localLogger`
 ```js
 const { logConfig, logger } = require('@vtfk/logger')

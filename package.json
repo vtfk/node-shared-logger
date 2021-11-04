@@ -28,10 +28,9 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "axios": "0.24.0",
     "deepmerge": "^4.2.2",
-    "pkg-dir": "5.0.0",
-    "winston": "3.3.3",
-    "winston-syslog": "2.4.4"
+    "pkg-dir": "5.0.0"
   },
   "devDependencies": {
     "jest": "27.3.1",

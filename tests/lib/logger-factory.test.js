@@ -2,7 +2,7 @@ const loggerFactory = require('../../src/lib/logger-factory')
 const logLevelMapper = require('../../src/lib/log-level-mapper')
 
 function matchLogMessage (message) {
-  const logMessageMatcher = /^\[ (?<dateTime>\d{1,2}\/\d{1,2}\/\d{4} \d{2}:\d{2}:\d{2}) \] < (?<level>\w{1,10}) > ([^:]*: |)(?<message>.*$)/
+  const logMessageMatcher = /^\[ (?<dateTime>\d{1,2}.\d{1,2}.\d{4} \d{2}:\d{2}:\d{2}) \] < (?<level>\w{1,10}) > ([^:]*: |)(?<message>.*$)/
   const match = message.match(logMessageMatcher)
   if (match === null) return null
   return {
@@ -13,12 +13,12 @@ function matchLogMessage (message) {
 
 function createLogger (fakeDeps) {
   const mergedFakeDeps = {
-    formatDateTime: jest.fn((date) => ({ fDate: '00/0/0000', fTime: '00:00:00' })),
+    formatDateTime: jest.fn((date) => ({ fDate: '00.00.0000', fTime: '00:00:00' })),
     logLevelMapper: jest.fn(logLevelMapper),
     loggerOptions: {
       localLogger: jest.fn((message) => {}),
       remoteLogger: {
-        log: jest.fn((message, options) => {})
+        log: jest.fn((message) => {})
       }
     },
     pkg: {},
@@ -92,8 +92,8 @@ describe('Checking parameters', () => {
   })
 })
 
-describe('Syslog severity testing', () => {
-  it('throws if syslogSeverity is undefined and not in production', () => {
+describe('Remote severity testing', () => {
+  it('throws if remoteSeverity is undefined and not in production', () => {
     const { logger } = createLogger({
       inProduction: false,
       logLevelMapper: logLevelMapper
@@ -102,7 +102,7 @@ describe('Syslog severity testing', () => {
     expect(() => logger()).toThrow()
   })
 
-  it('does not throw if syslogSeverity is undefined and is in production', () => {
+  it('does not throw if remoteSeverity is undefined and is in production', () => {
     const { logger } = createLogger({
       inProduction: true,
       logLevelMapper: logLevelMapper
@@ -228,23 +228,23 @@ describe('Message level', () => {
 describe('Date and time', () => {
   it('adds the date and time at correct location', () => {
     const { logger, mergedFakeDeps } = createLogger({
-      formatDateTime: jest.fn((date) => ({ fDate: '00/0/0000', fTime: '00:00:00' }))
+      formatDateTime: jest.fn((date) => ({ fDate: '00.00.0000', fTime: '00:00:00' }))
     })
 
     logger('info', 'testMessage')
     const localLogger = mergedFakeDeps.loggerOptions.localLogger.mock.calls[0][0]
 
-    expect(matchLogMessage(localLogger).dateTime).toBe('00/0/0000 00:00:00')
+    expect(matchLogMessage(localLogger).dateTime).toBe('00.00.0000 00:00:00')
   })
   it('Checks that it adds the date and time at correct location, test 2', () => {
     const { logger, mergedFakeDeps } = createLogger({
-      formatDateTime: jest.fn((date) => ({ fDate: '12/3/4567', fTime: '12:34:56' }))
+      formatDateTime: jest.fn((date) => ({ fDate: '12.03.4567', fTime: '12:34:56' }))
     })
 
     logger('info', 'testMessage')
     const localLogger = mergedFakeDeps.loggerOptions.localLogger.mock.calls[0][0]
 
-    expect(matchLogMessage(localLogger).dateTime).toBe('12/3/4567 12:34:56')
+    expect(matchLogMessage(localLogger).dateTime).toBe('12.03.4567 12:34:56')
   })
 })
 
@@ -265,7 +265,7 @@ describe('Should it log to remote?', () => {
         loggerOptions: {
           localLogger: () => {},
           remoteLogger: {
-            log: jest.fn((message, options) => {})
+            log: jest.fn((message) => {})
           },
           onlyInProd: testCase.onlyInProd,
           logToRemote: testCase.logToRemote
@@ -414,7 +414,7 @@ describe('Error handling', () => {
       loggerOptions: {
         localLogger: jest.fn((message) => {}),
         remoteLogger: {
-          log: jest.fn((message, options) => { throw Error('Test Error - R4nd0mC0d3') })
+          log: jest.fn((message) => { throw Error('Test Error - R4nd0mC0d3') })
         },
         onlyInProd: false,
         logToRemote: true
@@ -432,7 +432,7 @@ describe('Error handling', () => {
       loggerOptions: {
         localLogger: jest.fn((message) => {}),
         remoteLogger: {
-          log: jest.fn((message, options) => { throw Error('Test Error - R4nd0mC0d3') })
+          log: jest.fn((message) => { throw Error('Test Error - R4nd0mC0d3') })
         },
         onlyInProd: false,
         logToRemote: true
