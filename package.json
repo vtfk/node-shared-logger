@@ -7,7 +7,8 @@
     "test": "standard && jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "lint": "standard ./src/**/*.js"
+    "lint": "standard ./src/**/*.js",
+    "refresh": "rm -rf node_modules && rm package-lock.json && npm i"
   },
   "files": [
     "src"
