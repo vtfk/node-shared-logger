@@ -1,5 +1,8 @@
+const matchers = require('jest-extended')
 const loggerFactory = require('../../src/lib/logger-factory')
 const logLevelMapper = require('../../src/lib/log-level-mapper')
+
+expect.extend(matchers)
 
 function matchLogMessage (message) {
   const logMessageMatcher = /^\[ (?<dateTime>\d{1,2}.\d{1,2}.\d{4} \d{2}:\d{2}:\d{2}) \] < (?<level>\w{1,10}) > ([^:]*: |)(?<message>.*$)/

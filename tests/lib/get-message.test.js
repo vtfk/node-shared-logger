@@ -1,4 +1,7 @@
+const matchers = require('jest-extended')
 const getMessage = require('../../src/lib/get-message')
+
+expect.extend(matchers)
 
 const testOne = { objOne: 'First obj', objTwo: 'Second obj' }
 const testTwo = 123

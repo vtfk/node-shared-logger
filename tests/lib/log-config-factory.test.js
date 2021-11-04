@@ -1,5 +1,8 @@
+const matchers = require('jest-extended')
 const deepmerge = require('deepmerge')
 const logConfigFactory = require('../../src/lib/log-config-factory')
+
+expect.extend(matchers)
 
 jest.mock('axios')
 

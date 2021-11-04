@@ -1,4 +1,7 @@
+const matchers = require('jest-extended')
 let index = require('../src/index')
+
+expect.extend(matchers)
 
 describe('Checking for errors in index', () => {
   it('returns an object', () => {
