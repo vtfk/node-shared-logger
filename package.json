@@ -1,6 +1,6 @@
 {
   "name": "@vtfk/logger",
-  "version": "3.0.1",
+  "version": "4.0.0",
   "description": "A logger for console and Papertrail",
   "main": "src/index.js",
   "scripts": {
