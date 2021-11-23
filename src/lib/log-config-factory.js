@@ -16,7 +16,8 @@ function _logConfigFactory (options = {}, { axios, deepmerge, loggerOptions, env
     }
 
     // onlyInProd defaults to true
-    options.remote.onlyInProd = options.remote.onlyInProd === undefined
+    loggerOptions.onlyInProd = options.remote.onlyInProd === undefined ? true : options.remote.onlyInProd
+    options.remote.onlyInProd = loggerOptions.onlyInProd
 
     // enables remote logging if everything checks out, otherwise remote logging will be disabled
     loggerOptions.logToRemote = !options.remote.disabled &&
