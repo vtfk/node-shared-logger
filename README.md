@@ -66,6 +66,14 @@ const { logger } = require('@vtfk/logger')
 logger('info', ['test', 'message'])
 ```
 
+#### Ex. Basic (async)
+The least amount of code to log to console or a remote aggregator asynchronous (if options are set in enviroment variables)
+```js
+const { logger } = require('@vtfk/logger')
+
+await logger('info', ['test', 'message'])
+```
+
 #### Ex. Basic with specifying Error property
 Use logConfig to instruct that message property is used from Error objects
 ```js
