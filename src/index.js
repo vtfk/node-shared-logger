@@ -52,7 +52,7 @@ function logConfig (options = {}) { return logConfigFactory(options, logConfigDe
  * @param {array<string>}   message   An array of strings which is joined by a hyphen in the log message
  * @returns {void}
  */
-function logger (level, message) { return loggerFactory(level, message, loggerDeps) }
+async function logger (level, message) { return loggerFactory(level, message, loggerDeps) }
 
 // Run logConfig just in case only env variables are used
 logConfig()

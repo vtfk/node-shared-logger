@@ -1,6 +1,6 @@
 const getMessage = require('./get-message')
 
-function _loggerFactory (level, message, { formatDateTime, logLevelMapper, loggerOptions, pkg, inProduction }) {
+async function _loggerFactory (level, message, { formatDateTime, logLevelMapper, loggerOptions, pkg, inProduction }) {
   let messageArray = Array.isArray(message) ? message : [message]
   let logLevel = logLevelMapper(level)
 
@@ -33,16 +33,16 @@ function _loggerFactory (level, message, { formatDateTime, logLevelMapper, logge
   messageArray = messageArray.map(msg => getMessage(msg, loggerOptions.error.property))
   const messageFormats = formatLogMessage(formatDateTime, pkg, logLevel, messageArray)
 
+  localLog(loggerOptions, logLevel, messageFormats)
+
   const shouldLogToRemote = (loggerOptions.logToRemote && !(!inProduction && loggerOptions.onlyInProd)) || false
   try {
-    if (shouldLogToRemote) loggerOptions.remoteLogger.log(messageFormats.remoteLogMessage)
+    if (shouldLogToRemote) await loggerOptions.remoteLogger.log(messageFormats.remoteLogMessage, true)
   } catch (error) {
     const warnLevel = logLevelMapper('warn')
     const errorMessage = formatLogMessage(formatDateTime, pkg, warnLevel, ['logger-factory', 'logToRemote', 'error', error.message])
     localLog(loggerOptions, warnLevel, errorMessage)
   }
-
-  localLog(loggerOptions, logLevel, messageFormats)
 
   return shouldLogToRemote
 }

@@ -26,11 +26,11 @@ describe('Testing returned functions', () => {
     expect(() => index.logger('info', ['test', 'message'])).not.toThrow()
   })
 
-  it('does not log to remote with no config', () => {
-    expect(index.logger('info', ['test', 'message'])).toBe(false)
+  it('does not log to remote with no config', async () => {
+    expect(await index.logger('info', ['test', 'message'])).toBe(false)
   })
 
-  it('logs to remote with only env variables', () => {
+  it('logs to remote with only env variables', async () => {
     const oldEnvs = process.env
     process.env = {
       ...process.env,
@@ -43,14 +43,14 @@ describe('Testing returned functions', () => {
     jest.mock('axios')
     index = require('../src/index')
 
-    expect(index.logger('info', ['test', 'message'])).toBe(true)
+    expect(await index.logger('info', ['test', 'message'])).toBe(true)
     process.env = oldEnvs
 
     jest.resetModules()
     index = require('../src/index')
   })
 
-  it('does not log to remote if NODE_ENV !== produciton', () => {
+  it('does not log to remote if NODE_ENV !== produciton', async () => {
     const oldEnvs = process.env
     process.env = {
       ...process.env,
@@ -63,14 +63,14 @@ describe('Testing returned functions', () => {
     jest.mock('axios')
     index = require('../src/index')
 
-    expect(index.logger('info', ['test', 'message'])).toBe(false)
+    expect(await index.logger('info', ['test', 'message'])).toBe(false)
     process.env = oldEnvs
 
     jest.resetModules()
     index = require('../src/index')
   })
 
-  it('does not log to remote if NODE_ENV is undefined', () => {
+  it('does not log to remote if NODE_ENV is undefined', async () => {
     const oldEnvs = process.env
     process.env = {
       ...process.env,
@@ -82,7 +82,7 @@ describe('Testing returned functions', () => {
     jest.mock('axios')
     index = require('../src/index')
 
-    expect(index.logger('info', ['test', 'message'])).toBe(false)
+    expect(await index.logger('info', ['test', 'message'])).toBe(false)
     process.env = oldEnvs
 
     jest.resetModules()

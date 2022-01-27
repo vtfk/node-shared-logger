@@ -12,7 +12,7 @@ function _logConfigFactory (options = {}, { axios, deepmerge, loggerOptions, env
     options.remote.token = options.remote.token || envVariables.PAPERTRAIL_TOKEN
 
     loggerOptions.remoteLogger = {
-      log: msg => axios.post(options.remote.host, msg, { auth: { password: options.remote.token } })
+      log: async msg => await axios.post(options.remote.host, msg, { auth: { password: options.remote.token } })
     }
 
     // onlyInProd defaults to true
