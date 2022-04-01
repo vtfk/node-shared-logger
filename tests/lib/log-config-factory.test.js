@@ -69,6 +69,29 @@ describe('Checking client creation', () => {
     expect(fakeDeps.loggerOptions.logToRemote).toBeFalsy()
   })
 
+  it('sets remoteLevel if remote.level is set', () => {
+    const { fakeDeps } = createLogConfig({}, {
+      remote: {
+        host: 'example.com',
+        token: '45678',
+        level: 'warn'
+      }
+    })
+
+    expect(fakeDeps.loggerOptions.remoteLevel).toBe('warn')
+  })
+
+  it('remoteLevel is undefined if remote.level is not set', () => {
+    const { fakeDeps } = createLogConfig({}, {
+      remote: {
+        host: 'example.com',
+        token: '45678'
+      }
+    })
+
+    expect(fakeDeps.loggerOptions.remoteLevel).toBeFalsy()
+  })
+
   it('sets error if defined', () => {
     const { fakeDeps } = createLogConfig({}, {
       error: {

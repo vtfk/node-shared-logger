@@ -295,10 +295,15 @@ describe('Should it log to remote?', () => {
 
 describe('Logging to remote', () => {
   [
-    { logToRemote: true, shouldLog: true },
-    { logToRemote: false, shouldLog: false }
+    { logToRemote: true, shouldLog: true, remoteLevel: 'info' },
+    { logToRemote: true, shouldLog: true, remoteLevel: 'debug' },
+    { logToRemote: true, shouldLog: false, remoteLevel: 'warn' },
+    { logToRemote: false, shouldLog: false, remoteLevel: undefined },
+    { logToRemote: false, shouldLog: false, remoteLevel: undefined },
+    { logToRemote: false, shouldLog: false, remoteLevel: 'info' },
+    { logToRemote: false, shouldLog: false, remoteLevel: 'warn' }
   ].forEach(testCase => {
-    it(`should return ${testCase.shouldLog} when ${testCase.shouldLog ? '' : 'not '}logging to remote`, async () => {
+    it(`should return ${testCase.shouldLog} when ${testCase.shouldLog ? '' : 'not '}logging to remote and remoteLevel is${testCase.remoteLevel ? ` ${testCase.remoteLevel}` : '\'nt specified'}`, async () => {
       const { logger } = createLogger({
         inProduction: true,
         loggerOptions: {
@@ -306,7 +311,8 @@ describe('Logging to remote', () => {
           remoteLogger: {
             log: () => {}
           },
-          logToRemote: testCase.logToRemote
+          logToRemote: testCase.logToRemote,
+          remoteLevel: testCase.remoteLevel
         }
       })
 
