@@ -37,6 +37,7 @@ const loggerDeps = {
  * @param {boolean}   [options.remote.onlyInProd=true]    If true; only log to remote aggregator when NODE_ENV === 'production'
  * @param {string}    [options.remote.host]               Host for the remote aggregator
  * @param {string}    [options.remote.token]              Token for the remote aggregator
+ * @param {string}    [options.remote.level]              Lowest level for log to remote. If not set, all levels will log to remote
  * @param {string}    [options.prefix]                    A string that will be added in front of each log message (ex. UID for each run)
  * @param {string}    [options.suffix]                    A string that will be added at the end of each log message
  * @param {string}    [options.error.useMessage]          Use message property on error objects. If undefined; stack property will be used

@@ -15,6 +15,7 @@ interface LogConfigOptions {
     onlyInProd?: boolean
     host?: string
     token?: string
+    level?: Levels
   }
   azure?: {
     context?: {

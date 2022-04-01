@@ -32,7 +32,8 @@ const options = {
     disabled: false,            // If true; disables logging to remote, even if remote config is set
     onlyInProd: true,           // If true; only log to remote aggregator when NODE_ENV === 'production' (default is true)
     host: '',                   // Host for the remote aggregator
-    token: ''                   // Token for the remote aggregator
+    token: '',                  // Token for the remote aggregator
+    level: ''                   // Lowest level for log to remote. If not set, all levels will log to remote
   },
   azure: {                      // Options for Azure
     context: context,           // The context object received from an Azure Function (see example further down)
@@ -139,7 +140,7 @@ logConfig({
   remote: {
     onlyInProd: true,
     host: 'papertrail.example.com/v1/log',
-    token: 'jvkuvuyoufyofo8ygo8f609fo7ouyvcio7=',
+    token: 'jvkuvuyoufyofo8ygo8f609fo7ouyvcio7='
   }
   prefix: 'prefixedValue',
   suffix: 'suffixedValue'
@@ -147,6 +148,36 @@ logConfig({
 
 logger('info', ['test', 'message'])
 
+const error = Error('Error in process')
+logger('error', ['Error in app', error])
+
+// OUTPUT
+// NAME-OF-APP and VER-OF-APP is the value of "name" and "version" in your package.json
+[ 2019.05.19 15:13:35 ] < INFO >  {NAME-OF-APP} - {VER-OF-APP}: prefixedValue - test - message - suffixedValue
+[ 2019.05.19 15:13:35 ] < ERROR >  {NAME-OF-APP} - {VER-OF-APP}: prefixedValue - Error in app - Error: Error in process - suffixedValue
+```
+
+#### Ex. Logging to remote with a lowest level for remote
+Configuration of remote options in the `logConfig()` function
+```js
+const { logConfig, logger } = require('@vtfk/logger')
+
+// logConfig() is optional
+logConfig({
+  remote: {
+    onlyInProd: true,
+    host: 'papertrail.example.com/v1/log',
+    token: 'jvkuvuyoufyofo8ygo8f609fo7ouyvcio7=',
+    level: 'warn'
+  }
+  prefix: 'prefixedValue',
+  suffix: 'suffixedValue'
+})
+
+// this will NOT log to remote since this level is "info" and lowest remote level is set to "warn"
+logger('info', ['test', 'message'])
+
+// this will log to remote since this level is "error" and lowest remote level is set to "warn"
 const error = Error('Error in process')
 logger('error', ['Error in app', error])
 

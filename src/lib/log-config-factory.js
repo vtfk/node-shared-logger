@@ -23,6 +23,11 @@ function _logConfigFactory (options = {}, { axios, deepmerge, loggerOptions, env
     loggerOptions.logToRemote = !options.remote.disabled &&
       typeof options.remote.host === 'string' &&
       typeof options.remote.token === 'string'
+
+    // set remote level (lowest level for remote logging)
+    if (options.remote.level) {
+      loggerOptions.remoteLevel = options.remote.level
+    }
   }
 
   loggerOptions.error = typeof options.error === 'object' ? options.error : undefined

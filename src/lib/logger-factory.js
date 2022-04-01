@@ -32,10 +32,12 @@ async function _loggerFactory (level, message, { formatDateTime, logLevelMapper,
 
   messageArray = messageArray.map(msg => getMessage(msg, loggerOptions.error.property))
   const messageFormats = formatLogMessage(formatDateTime, pkg, logLevel, messageArray)
+  const remoteLevel = (loggerOptions.remoteLevel && logLevelMapper(loggerOptions.remoteLevel)) || undefined
+  const remoteLevelLogToRemote = remoteLevel ? logLevel.severity <= remoteLevel.severity : true
 
   localLog(loggerOptions, logLevel, messageFormats)
 
-  const shouldLogToRemote = (loggerOptions.logToRemote && !(!inProduction && loggerOptions.onlyInProd)) || false
+  const shouldLogToRemote = (loggerOptions.logToRemote && !(!inProduction && loggerOptions.onlyInProd) && remoteLevelLogToRemote) || false
   try {
     if (shouldLogToRemote) await loggerOptions.remoteLogger.log(messageFormats.remoteLogMessage, true)
   } catch (error) {
