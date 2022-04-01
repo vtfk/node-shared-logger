@@ -29,13 +29,13 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "axios": "0.25.0",
+    "axios": "0.26.1",
     "deepmerge": "^4.2.2",
     "pkg-dir": "5.0.0"
   },
   "devDependencies": {
-    "jest": "27.4.7",
-    "jest-extended": "1.2.1",
+    "jest": "27.5.1",
+    "jest-extended": "2.0.0",
     "standard": "16.0.4"
   },
   "jest": {
