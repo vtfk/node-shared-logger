@@ -323,6 +323,72 @@ describe('Logging to remote', () => {
   })
 })
 
+describe('Should it log to teams?', () => {
+  [
+    { inProduction: true, onlyTeamsInProd: true, logToTeams: true, shouldLog: true },
+    { inProduction: false, onlyTeamsInProd: true, logToTeams: true, shouldLog: false },
+    { inProduction: true, onlyTeamsInProd: false, logToTeams: true, shouldLog: true },
+    { inProduction: false, onlyTeamsInProd: false, logToTeams: true, shouldLog: true },
+    { inProduction: true, onlyTeamsInProd: true, logToTeams: false, shouldLog: false },
+    { inProduction: false, onlyTeamsInProd: true, logToTeams: false, shouldLog: false },
+    { inProduction: true, onlyTeamsInProd: false, logToTeams: false, shouldLog: false },
+    { inProduction: false, onlyTeamsInProd: false, logToTeams: false, shouldLog: false }
+  ].forEach(testCase => {
+    it(`${testCase.shouldLog ? 'yes, ' : 'no,  '}if: inProduction = ${testCase.inProduction}, onlyTeamsInProd = ${testCase.onlyTeamsInProd}, logToTeams = ${testCase.logToTeams}`, async () => {
+      const { logger, mergedFakeDeps } = createLogger({
+        inProduction: testCase.inProduction,
+        loggerOptions: {
+          localLogger: () => {},
+          teamsLogger: {
+            log: jest.fn((message) => {})
+          },
+          onlyTeamsInProd: testCase.onlyTeamsInProd,
+          logToTeams: testCase.logToTeams
+        }
+      })
+
+      await logger('info', 'msg')
+
+      const teamsLogger = mergedFakeDeps.loggerOptions.teamsLogger
+      if (testCase.shouldLog) {
+        expect(teamsLogger.log).toHaveBeenCalled()
+      } else {
+        expect(teamsLogger.log).not.toHaveBeenCalled()
+      }
+    })
+  })
+})
+
+describe('Logging to teams', () => {
+  [
+    { logToTeams: true, shouldLog: false, teamsLevel: 'info' },
+    { logToTeams: true, shouldLog: false, teamsLevel: 'debug' },
+    { logToTeams: true, shouldLog: false, teamsLevel: 'warn' },
+    { logToTeams: false, shouldLog: false, teamsLevel: undefined },
+    { logToTeams: false, shouldLog: false, teamsLevel: undefined },
+    { logToTeams: false, shouldLog: false, teamsLevel: 'info' },
+    { logToTeams: false, shouldLog: false, teamsLevel: 'warn' }
+  ].forEach(testCase => {
+    it(`should return ${testCase.shouldLog} when ${testCase.shouldLog ? '' : 'not '}logging to teams and teamsLevel is${testCase.teamsLevel ? ` ${testCase.teamsLevel}` : '\'nt specified'}`, async () => {
+      const { logger } = createLogger({
+        inProduction: true,
+        loggerOptions: {
+          localLogger: () => {},
+          teamsLogger: {
+            log: () => {}
+          },
+          logToTeams: testCase.logToTeams,
+          teamsLevel: testCase.teamsLevel
+        }
+      })
+
+      const loggedToTeams = await logger('info', 'msg')
+
+      expect(loggedToTeams).toBe(testCase.shouldLog)
+    })
+  })
+})
+
 describe('Checking logging with Azure context', () => {
   it('appends invocationId to prefix', async () => {
     const invocationId = '02sd1514-c4dc-4c3a-ae9f-0066bb1da3a4'

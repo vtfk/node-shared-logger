@@ -1,27 +1,33 @@
 const levelMapper = {
   error: {
     severity: 0,
-    azureLevel: 'error'
+    azureLevel: 'error',
+    teamsColor: 'ff0000'
   },
   warn: {
     severity: 1,
-    azureLevel: 'warn'
+    azureLevel: 'warn',
+    teamsColor: 'ffff00'
   },
   info: {
     severity: 2,
-    azureLevel: 'info'
+    azureLevel: 'info',
+    teamsColor: '00ff00'
   },
   verbose: {
     severity: 3,
-    azureLevel: 'verbose'
+    azureLevel: 'verbose',
+    teamsColor: '0000ff'
   },
   debug: {
     severity: 4,
-    azureLevel: 'verbose'
+    azureLevel: 'verbose',
+    teamsColor: '0000ff'
   },
   silly: {
     severity: 5,
-    azureLevel: 'verbose'
+    azureLevel: 'verbose',
+    teamsColor: '0000ff'
   }
 }
 
@@ -35,7 +41,8 @@ module.exports = (level) => {
         severity: mappedLevel.severity,
         level: level.toUpperCase(),
         padding: ' '.repeat(longestLevelString.length - level.length),
-        azureLevel: mappedLevel.azureLevel
+        azureLevel: mappedLevel.azureLevel,
+        teamsColor: mappedLevel.teamsColor
       }
     }
   } catch (error) {

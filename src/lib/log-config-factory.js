@@ -7,26 +7,52 @@ function _logConfigFactory (options = {}, { axios, deepmerge, loggerOptions, env
       token: envVariables.PAPERTRAIL_TOKEN
     }
   }
-  if (options && typeof options === 'object' && options.remote && typeof options.remote === 'object') {
-    options.remote.host = options.remote.host || envVariables.PAPERTRAIL_HOST
-    options.remote.token = options.remote.token || envVariables.PAPERTRAIL_TOKEN
-
-    loggerOptions.remoteLogger = {
-      log: async msg => await axios.post(options.remote.host, msg, { auth: { password: options.remote.token } })
+  if ((!options || !options.teams) && envVariables.TEAMS_WEBHOOK_URL) {
+    options.teams = {
+      url: envVariables.TEAMS_WEBHOOK_URL
     }
+  }
+  if (options && typeof options === 'object') {
+    // remote logging
+    if (options.remote && typeof options.remote === 'object') {
+      options.remote.host = options.remote.host || envVariables.PAPERTRAIL_HOST
+      options.remote.token = options.remote.token || envVariables.PAPERTRAIL_TOKEN
 
-    // onlyInProd defaults to true
-    loggerOptions.onlyInProd = options.remote.onlyInProd === undefined ? true : options.remote.onlyInProd
-    options.remote.onlyInProd = loggerOptions.onlyInProd
+      loggerOptions.remoteLogger = {
+        log: async msg => await axios.post(options.remote.host, msg, { auth: { password: options.remote.token } })
+      }
 
-    // enables remote logging if everything checks out, otherwise remote logging will be disabled
-    loggerOptions.logToRemote = !options.remote.disabled &&
-      typeof options.remote.host === 'string' &&
-      typeof options.remote.token === 'string'
+      // onlyInProd defaults to true
+      loggerOptions.onlyInProd = options.remote.onlyInProd === undefined ? true : options.remote.onlyInProd
+      options.remote.onlyInProd = loggerOptions.onlyInProd
 
-    // set remote level (lowest level for remote logging)
-    if (options.remote.level) {
-      loggerOptions.remoteLevel = options.remote.level
+      // enables remote logging if everything checks out, otherwise remote logging will be disabled
+      loggerOptions.logToRemote = !options.remote.disabled &&
+        typeof options.remote.host === 'string' &&
+        typeof options.remote.token === 'string'
+
+      // set remote level (lowest level for remote logging)
+      if (options.remote.level) {
+        loggerOptions.remoteLevel = options.remote.level
+      }
+    }
+    // Teams logging
+    if (options.teams && typeof options.teams === 'object') {
+      options.teams.url = options.teams.url || envVariables.TEAMS_WEBHOOK_URL
+
+      loggerOptions.teamsLogger = {
+        log: async adaptiveCard => await axios.post(options.teams.url, adaptiveCard) // CREATE ADAPTIVE CARD BEFORE POSTING
+      }
+
+      // onlyTeamsInProd defaults to true
+      loggerOptions.onlyTeamsInProd = options.teams.onlyInProd === undefined ? true : options.teams.onlyInProd
+      options.teams.onlyInProd = loggerOptions.onlyTeamsInProd
+
+      // enables teams logging if everything checks out, otherwise teams logging will be disabled
+      loggerOptions.logToTeams = !options.teams.disabled && typeof options.teams.url === 'string'
+
+      // set teams level (lowest level for teams logging)
+      loggerOptions.teamsLevel = options.teams.level || 'warn' // Default log level for Teams is set to WARN
     }
   }
 

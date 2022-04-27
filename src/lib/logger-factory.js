@@ -34,29 +34,61 @@ async function _loggerFactory (level, message, { formatDateTime, logLevelMapper,
   const messageFormats = formatLogMessage(formatDateTime, pkg, logLevel, messageArray)
   const remoteLevel = (loggerOptions.remoteLevel && logLevelMapper(loggerOptions.remoteLevel)) || undefined
   const remoteLevelLogToRemote = remoteLevel ? logLevel.severity <= remoteLevel.severity : true
+  const teamsLevel = (loggerOptions.teamsLevel && logLevelMapper(loggerOptions.teamsLevel)) || undefined
+  const remoteLevelLogToTeams = teamsLevel ? logLevel.severity <= teamsLevel.severity : true
 
   localLog(loggerOptions, logLevel, messageFormats)
 
+  // Remote logging
   const shouldLogToRemote = (loggerOptions.logToRemote && !(!inProduction && loggerOptions.onlyInProd) && remoteLevelLogToRemote) || false
   try {
-    if (shouldLogToRemote) await loggerOptions.remoteLogger.log(messageFormats.remoteLogMessage, true)
+    if (shouldLogToRemote) await loggerOptions.remoteLogger.log(messageFormats.remoteLogMessage)
   } catch (error) {
     const warnLevel = logLevelMapper('warn')
     const errorMessage = formatLogMessage(formatDateTime, pkg, warnLevel, ['logger-factory', 'logToRemote', 'error', error.message])
     localLog(loggerOptions, warnLevel, errorMessage)
   }
 
-  return shouldLogToRemote
+  // Teams logging
+  const shouldLogToTeams = (loggerOptions.logToTeams && !(!inProduction && loggerOptions.onlyTeamsInProd) && remoteLevelLogToTeams) || false
+  try {
+    if (shouldLogToTeams) await loggerOptions.teamsLogger.log(messageFormats.teamsAdaptiveCard)
+  } catch (error) {
+    const warnLevel = logLevelMapper('warn')
+    const errorMessage = formatLogMessage(formatDateTime, pkg, warnLevel, ['logger-factory', 'logToTeams', 'error', error.message])
+    localLog(loggerOptions, warnLevel, errorMessage)
+  }
+
+  return shouldLogToRemote // This is only used for testing - the tests work exactly the same way for both logging to remote and to Teams, if you mess with one of them, you mess with both (the tests)!
 }
 
 function formatLogMessage (formatDateTime, pkg, logLevel, messageArray) {
   const { fDate, fTime } = formatDateTime(new Date())
   const funcDetails = pkg && pkg.version ? `${pkg.name} - ${pkg.version}: ` : ''
   const logMessage = `${funcDetails}${messageArray.join(' - ')}`
+
   return {
     logMessage,
     remoteLogMessage: `${logLevel.level} - ${logMessage}`,
-    localLogMessage: `[ ${fDate} ${fTime} ] < ${logLevel.level} >${logLevel.padding} ${logMessage}`
+    localLogMessage: `[ ${fDate} ${fTime} ] < ${logLevel.level} >${logLevel.padding} ${logMessage}`,
+    teamsAdaptiveCard: formatAdaptiveCard(logLevel, `${logLevel.level} - ${funcDetails}`, messageArray)
+  }
+}
+
+function formatAdaptiveCard (logLevel, title, messageArray) {
+  return {
+    '@type': 'MessageCard',
+    '@context': 'https://schema.org/extensions',
+    summary: 'Denne vet jeg ikke hvor dukker opp, men microsoft MÅÅÅ ha den',
+    themeColor: logLevel.teamsColor,
+    title: title,
+    sections: [
+      {
+        facts: messageArray.map(msg => {
+          return { name: 'Msg:', value: msg }
+        })
+      }
+    ]
   }
 }
 

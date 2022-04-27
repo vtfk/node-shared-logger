@@ -4,7 +4,7 @@
   "description": "A logger for console and Papertrail",
   "main": "src/index.js",
   "scripts": {
-    "test": "standard && jest && npm audit",
+    "test": "standard && jest --verbose && npm audit",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "lint": "standard ./src/**/*.js",

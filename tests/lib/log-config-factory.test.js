@@ -134,78 +134,131 @@ describe('Checking client creation', () => {
     expect(fakeDeps.loggerOptions.localLogger).toBeUndefined()
   })
 
-  it('uses env variables if remote is not defined', () => {
-    const { fakeDeps } = createLogConfig({
-      envVariables: {
-        PAPERTRAIL_HOST: 'env.example.com',
-        PAPERTRAIL_TOKEN: '4567'
-      }
-    }, {})
+  // Remote
+  describe('Remote logging', () => {
+    it('uses env variables if remote is not defined', () => {
+      const { fakeDeps } = createLogConfig({
+        envVariables: {
+          PAPERTRAIL_HOST: 'env.example.com',
+          PAPERTRAIL_TOKEN: '4567'
+        }
+      }, {})
 
-    const logConfigStats = fakeDeps.loggerOptions.previousOptions.remote
-    expect(logConfigStats).toMatchObject({
-      host: 'env.example.com',
-      token: '4567',
-      onlyInProd: true
+      const logConfigStats = fakeDeps.loggerOptions.previousOptions.remote
+      expect(logConfigStats).toMatchObject({
+        host: 'env.example.com',
+        token: '4567',
+        onlyInProd: true
+      })
     })
-  })
 
-  it('uses remote if both env variables and remote is defined', () => {
-    const { fakeDeps } = createLogConfig({
-      envVariables: {
-        PAPERTRAIL_HOST: 'env.example.com',
-        PAPERTRAIL_TOKEN: '4567'
-      }
-    }, {
-      remote: {
+    it('uses remote if both env variables and remote is defined', () => {
+      const { fakeDeps } = createLogConfig({
+        envVariables: {
+          PAPERTRAIL_HOST: 'env.example.com',
+          PAPERTRAIL_TOKEN: '4567'
+        }
+      }, {
+        remote: {
+          host: 'example.com',
+          token: '45678'
+        }
+      })
+
+      const logConfigStats = fakeDeps.loggerOptions.previousOptions.remote
+      expect(logConfigStats).toMatchObject({
         host: 'example.com',
-        token: '45678'
-      }
+        token: '45678',
+        onlyInProd: true
+      })
     })
 
-    const logConfigStats = fakeDeps.loggerOptions.previousOptions.remote
-    expect(logConfigStats).toMatchObject({
-      host: 'example.com',
-      token: '45678',
-      onlyInProd: true
+    it('uses remote if both env variables and remote is defined, no remote.host', () => {
+      const { fakeDeps } = createLogConfig({
+        envVariables: {
+          PAPERTRAIL_HOST: 'env.example.com',
+          PAPERTRAIL_TOKEN: '4567'
+        }
+      }, {
+        remote: {
+          token: '45678'
+        }
+      })
+
+      const logConfigStats = fakeDeps.loggerOptions.previousOptions.remote
+      expect(logConfigStats).toMatchObject({
+        token: '45678',
+        onlyInProd: true
+      })
+    })
+
+    it('uses remote if both env variables and remote is defined, no remote.token', () => {
+      const { fakeDeps } = createLogConfig({
+        envVariables: {
+          PAPERTRAIL_HOST: 'env.example.com',
+          PAPERTRAIL_TOKEN: '4567'
+        }
+      }, {
+        remote: {
+          host: 'example.com'
+        }
+      })
+
+      const logConfigStats = fakeDeps.loggerOptions.previousOptions.remote
+      expect(logConfigStats).toMatchObject({
+        host: 'example.com',
+        onlyInProd: true
+      })
     })
   })
 
-  it('uses remote if both env variables and remote is defined, no remote.host', () => {
-    const { fakeDeps } = createLogConfig({
-      envVariables: {
-        PAPERTRAIL_HOST: 'env.example.com',
-        PAPERTRAIL_TOKEN: '4567'
-      }
-    }, {
-      remote: {
-        token: '45678'
-      }
+  // Teams
+  describe('Teams logging', () => {
+    it('uses env variables if teams is not defined', () => {
+      const { fakeDeps } = createLogConfig({
+        envVariables: {
+          TEAMS_WEBHOOK_URL: 'env.example.com'
+        }
+      }, {})
+
+      const logConfigStats = fakeDeps.loggerOptions.previousOptions.teams
+      expect(logConfigStats).toMatchObject({
+        url: 'env.example.com',
+        onlyInProd: true
+      })
     })
 
-    const logConfigStats = fakeDeps.loggerOptions.previousOptions.remote
-    expect(logConfigStats).toMatchObject({
-      token: '45678',
-      onlyInProd: true
-    })
-  })
+    it('uses teams if both env variables and teams is defined', () => {
+      const { fakeDeps } = createLogConfig({
+        envVariables: {
+          TEAMS_WEBHOOK_URL: 'env.example.com'
+        }
+      }, {
+        teams: {
+          url: 'example.com'
+        }
+      })
 
-  it('uses remote if both env variables and remote is defined, no remote.token', () => {
-    const { fakeDeps } = createLogConfig({
-      envVariables: {
-        PAPERTRAIL_HOST: 'env.example.com',
-        PAPERTRAIL_TOKEN: '4567'
-      }
-    }, {
-      remote: {
-        host: 'example.com'
-      }
+      const logConfigStats = fakeDeps.loggerOptions.previousOptions.teams
+      expect(logConfigStats).toMatchObject({
+        url: 'example.com',
+        onlyInProd: true
+      })
     })
 
-    const logConfigStats = fakeDeps.loggerOptions.previousOptions.remote
-    expect(logConfigStats).toMatchObject({
-      host: 'example.com',
-      onlyInProd: true
+    it('uses teams if both env variables and teams is defined, no teams.url', () => {
+      const { fakeDeps } = createLogConfig({
+        envVariables: {
+          TEAMS_WEBHOOK_URL: 'env.example.com'
+        }
+      }, {
+        teams: {}
+      })
+
+      const logConfigStats = fakeDeps.loggerOptions.previousOptions.teams
+      expect(logConfigStats).toMatchObject({
+        onlyInProd: true
+      })
     })
   })
 
