@@ -21,19 +21,27 @@ All options are optional.
 
 Logging to papertrail can be configured in `logConfig()` or as env variables.
 
-Azure Function logging can be configured in `logConfing()`.
+Logging to Microsoft Teams can be configured in `logConfig()` or as env variable **TEAMS_WEBHOOK_URL**.
+
+Azure Function logging can be configured in `logConfig()`.
 
 > Note: `logConfig()` can be called multiple times to update the config throughout the program.
   And it will keep the previous config parameter if not specified in the next call.
 
 ```js
 const options = {
-  remote: {                     // Options for remote logging. If undefined; disables remote logging
+  remote: {                     // Options for remote logging.
     disabled: false,            // If true; disables logging to remote, even if remote config is set
     onlyInProd: true,           // If true; only log to remote aggregator when NODE_ENV === 'production' (default is true)
     host: '',                   // Host for the remote aggregator
     token: '',                  // Token for the remote aggregator
     level: ''                   // Lowest level for log to remote. If not set, all levels will log to remote
+  },
+  teams: {                      // Options for Microsoft Teams logging with webhook.
+    disabled: false,            // If true; disables logging to Microsoft Teams, even if teams config is set
+    onlyInProd: true,           // If true; only log to Microsoft Teams when NODE_ENV === 'production' (default is true)
+    url: '',                    // Microsoft Teams channel webhook url
+    level: ''                   // Lowest level for log to Microsoft Teams. If not set, all levels will log to Microsoft Teams
   },
   azure: {                      // Options for Azure
     context: context,           // The context object received from an Azure Function (see example further down)
@@ -55,8 +63,12 @@ logConfig(options)
 ```bash
 PAPERTRAIL_HOST = papertrail.example.com/v1/log
 PAPERTRAIL_TOKEN = jvkuvuyoufyofo8ygo8f609fo7ouyvcio7=
+TEAMS_WEBHOOK_URL = https://<tenant>.webhook.office.com/blablabla
 ```
 `logConfig()` options take priority.
+
+[How to get Microsoft Teams Webhook URL](https://docs.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook)
+
 
 ### Examples
 #### Ex. Basic
@@ -130,7 +142,7 @@ logger('warn', ['another', 'action'])
 [ 2019.05.19 15:41:17 ] < WARN >  {NAME-OF-APP} - {VER-OF-APP}: V01k3pDpHCBkAHPyCvOOl - another - action
 ```
 
-#### Ex. Logging to remote
+#### Ex. Logging to remote or Microsoft Teams
 Configuration of remote options in the `logConfig()` function
 ```js
 const { logConfig, logger } = require('@vtfk/logger')
@@ -141,6 +153,9 @@ logConfig({
     onlyInProd: true,
     host: 'papertrail.example.com/v1/log',
     token: 'jvkuvuyoufyofo8ygo8f609fo7ouyvcio7='
+  },
+  teams: {
+    url: 'https://<tenant>.webhook.office.com/blablabla'
   }
   prefix: 'prefixedValue',
   suffix: 'suffixedValue'
@@ -157,7 +172,7 @@ logger('error', ['Error in app', error])
 [ 2019.05.19 15:13:35 ] < ERROR >  {NAME-OF-APP} - {VER-OF-APP}: prefixedValue - Error in app - Error: Error in process - suffixedValue
 ```
 
-#### Ex. Logging to remote with a lowest level for remote
+#### Ex. Logging to remote with a lowest level for remote or Microsoft Teams
 Configuration of remote options in the `logConfig()` function
 ```js
 const { logConfig, logger } = require('@vtfk/logger')
@@ -169,6 +184,10 @@ logConfig({
     host: 'papertrail.example.com/v1/log',
     token: 'jvkuvuyoufyofo8ygo8f609fo7ouyvcio7=',
     level: 'warn'
+  },
+  teams: {
+    url: 'https://<tenant>.webhook.office.com/blablabla',
+    level: 'error'
   }
   prefix: 'prefixedValue',
   suffix: 'suffixedValue'
@@ -187,7 +206,7 @@ logger('error', ['Error in app', error])
 [ 2019.05.19 15:13:35 ] < ERROR >  {NAME-OF-APP} - {VER-OF-APP}: prefixedValue - Error in app - Error: Error in process - suffixedValue
 ```
 
-#### Ex. Disable logging to remote
+#### Ex. Disable logging to remote or Microsoft Teams
 Configuration of remote options in the `logConfig()` function
 ```js
 const { logConfig, logger } = require('@vtfk/logger')
@@ -199,6 +218,10 @@ logConfig({
     onlyInProd: true,
     host: 'papertrail.example.com/v1/log',
     token: 'jvkuvuyoufyofo8ygo8f609fo7ouyvcio7='
+  },
+  teams: {
+    disabled: true,
+    url: 'https://<tenant>.webhook.office.com/blablabla'
   }
   prefix: 'prefixedValue',
   suffix: 'suffixedValue'
