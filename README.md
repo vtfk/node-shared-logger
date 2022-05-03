@@ -61,6 +61,7 @@ logConfig(options)
 
 ### ENV Variables
 ```bash
+NODE_ENV=production
 PAPERTRAIL_HOST = papertrail.example.com/v1/log
 PAPERTRAIL_TOKEN = jvkuvuyoufyofo8ygo8f609fo7ouyvcio7=
 TEAMS_WEBHOOK_URL = https://<tenant>.webhook.office.com/blablabla
