@@ -268,6 +268,19 @@ module.exports = async function (context, req) {
 ## Logging
 Remote logging is only enabled in a production enviroment (`NODE_ENV === 'production'`), unless `options.remote.onlyInProd === false`.
 
+## Microsoft Teams logging - message format
+Use **:** inside a log message to specify what is **name** and **value** (name: value) for a Microsoft Teams message
+### Examples
+```js
+logger('warn', 'Important info: Mip mop')
+```
+Will result in
+
+```js
+logger('error', ['Look here: tut tut', 'Additional info: something useful', 'this will use the defualt name'])
+```
+Will result in
+
 # License
 
 [MIT](LICENSE)

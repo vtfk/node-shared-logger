@@ -85,7 +85,9 @@ function formatAdaptiveCard (logLevel, title, messageArray) {
     sections: [
       {
         facts: messageArray.map(msg => {
-          return { name: 'Msg:', value: msg }
+          const name = msg.indexOf(':') > 0 ? msg.substring(0, msg.indexOf(':')).trim() : 'Msg'
+          const value = msg.indexOf(':') > 0 ? msg.substring(msg.indexOf(':') + 1, msg.length).trim() : msg
+          return { name, value }
         })
       }
     ]
