@@ -276,10 +276,16 @@ logger('warn', 'Important info: Mip mop')
 ```
 Will result in
 
+![image](https://user-images.githubusercontent.com/25528003/166920893-e2592641-90af-43be-95a7-d90e19f175f8.png)
+
+
 ```js
 logger('error', ['Look here: tut tut', 'Additional info: something useful', 'this will use the defualt name'])
 ```
 Will result in
+
+![image](https://user-images.githubusercontent.com/25528003/166920980-a0403876-eacb-4309-a131-1966c788f1bd.png)
+
 
 # License
 
