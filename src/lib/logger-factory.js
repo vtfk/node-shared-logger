@@ -79,7 +79,7 @@ function formatAdaptiveCard (logLevel, title, messageArray) {
   return {
     '@type': 'MessageCard',
     '@context': 'https://schema.org/extensions',
-    summary: 'Denne vet jeg ikke hvor dukker opp, men microsoft MÅÅÅ ha den',
+    summary: title,
     themeColor: logLevel.teamsColor,
     title: title,
     sections: [
