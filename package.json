@@ -29,7 +29,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "axios": "0.26.1",
+    "axios": "0.27.2",
     "deepmerge": "^4.2.2",
     "pkg-dir": "5.0.0"
   },
