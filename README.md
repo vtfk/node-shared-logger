@@ -16,6 +16,9 @@
 
 ## Usage
 
+> [!IMPORTANT]  
+> Version 5.x.x and above requires Nodejs 16 or higher
+
 ## Config
 All options are optional.
 
@@ -142,6 +145,14 @@ logger('warn', ['another', 'action'])
 [ 2019.05.19 15:41:17 ] < INFO >  {NAME-OF-APP} - {VER-OF-APP}: V01k3pDpHCBkAHPyCvOOl - test - message
 [ 2019.05.19 15:41:17 ] < WARN >  {NAME-OF-APP} - {VER-OF-APP}: V01k3pDpHCBkAHPyCvOOl - another - action
 ```
+
+#### Ex. Logging in Azure Function with context object
+```js
+module.exports = async function (context, req) {
+  logger('info', ['New Request. Validating token'], context) // This will log to context instead of using console.log (it will still display)
+}
+```
+
 
 #### Ex. Logging to remote or Microsoft Teams
 Configuration of remote options in the `logConfig()` function
