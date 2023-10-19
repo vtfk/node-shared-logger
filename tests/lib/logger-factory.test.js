@@ -99,7 +99,7 @@ describe('Remote severity testing', () => {
   it('throws if remoteSeverity is undefined and not in production', async () => {
     const { logger } = createLogger({
       inProduction: false,
-      logLevelMapper: logLevelMapper
+      logLevelMapper
     })
     await expect(() => logger('unknown', 'msg'))
       .rejects.toThrow()
@@ -110,7 +110,7 @@ describe('Remote severity testing', () => {
   it('does not throw if remoteSeverity is undefined and is in production', async () => {
     const { logger } = createLogger({
       inProduction: true,
-      logLevelMapper: logLevelMapper
+      logLevelMapper
     })
     await expect(() => logger('unknown', 'msg'))
       .resolved
@@ -396,7 +396,7 @@ describe('Checking logging with Azure context', () => {
       loggerOptions: {
         localLogger: jest.fn((message) => {}),
         azure: {
-          invocationId: invocationId,
+          invocationId,
           log: {
             info: jest.fn((host, options) => ({}))
           }
@@ -417,7 +417,7 @@ describe('Checking logging with Azure context', () => {
       loggerOptions: {
         localLogger: jest.fn((message) => {}),
         azure: {
-          invocationId: invocationId,
+          invocationId,
           excludeInvocationId: true,
           log: {
             info: jest.fn((host, options) => ({}))
@@ -438,7 +438,7 @@ describe('Checking logging with Azure context', () => {
       loggerOptions: {
         localLogger: jest.fn((message) => {}),
         azure: {
-          invocationId: invocationId,
+          invocationId,
           log: {
             error: jest.fn((host, options) => ({})),
             warn: jest.fn((host, options) => ({})),
@@ -470,7 +470,7 @@ describe('Checking logging with Azure context', () => {
         loggerOptions: {
           localLogger: jest.fn((message) => {}),
           azure: {
-            invocationId: invocationId,
+            invocationId,
             log: {
               error: jest.fn((host, options) => ({})),
               warn: jest.fn((host, options) => ({})),

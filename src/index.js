@@ -57,9 +57,10 @@ function logConfig (options = {}) { return logConfigFactory(options, logConfigDe
  * @description This function will log a message with a level of severity
  * @param {string}          level     The severity of the message
  * @param {array<string>}   message   An array of strings which is joined by a hyphen in the log message
+ * @param {object}          [context] A context object from azure - for context log without memory clutter and conflicting invocation ids
  * @returns {void}
  */
-async function logger (level, message) { return loggerFactory(level, message, loggerDeps) }
+async function logger (level, message, context) { return await loggerFactory(level, message, loggerDeps, context) }
 
 // Run logConfig just in case only env variables are used
 logConfig()

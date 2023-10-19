@@ -1,6 +1,6 @@
 const getMessage = require('./get-message')
 
-async function _loggerFactory (level, message, { formatDateTime, logLevelMapper, loggerOptions, pkg, inProduction }) {
+async function _loggerFactory (level, message, { formatDateTime, logLevelMapper, loggerOptions, pkg, inProduction }, context) {
   let messageArray = Array.isArray(message) ? message : [message]
   let logLevel = logLevelMapper(level)
 
@@ -59,6 +59,17 @@ async function _loggerFactory (level, message, { formatDateTime, logLevelMapper,
     localLog(loggerOptions, warnLevel, errorMessage)
   }
 
+  // Azure context logging
+  if (context && context.log) {
+    try {
+      context.log[logLevel.azureLevel](messageFormats.logMessage)
+    } catch (error) {
+      const warnLevel = logLevelMapper('warn')
+      const errorMessage = formatLogMessage(formatDateTime, pkg, warnLevel, ['logger-factory', 'logToTeams', 'error', error.message])
+      localLog(loggerOptions, warnLevel, errorMessage)
+    }
+  }
+
   return shouldLogToRemote // This is only used for testing - the tests work exactly the same way for both logging to remote and to Teams, if you mess with one of them, you mess with both (the tests)!
 }
 
@@ -81,7 +92,7 @@ function formatAdaptiveCard (logLevel, title, messageArray) {
     '@context': 'https://schema.org/extensions',
     summary: title,
     themeColor: logLevel.teamsColor,
-    title: title,
+    title,
     sections: [
       {
         facts: messageArray.map(msg => {
