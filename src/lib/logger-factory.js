@@ -31,7 +31,7 @@ async function _loggerFactory (level, message, { formatDateTime, logLevelMapper,
   }
 
   messageArray = messageArray.map(msg => getMessage(msg, loggerOptions.error.property))
-  const messageFormats = formatLogMessage(formatDateTime, pkg, logLevel, messageArray)
+  const messageFormats = formatLogMessage(formatDateTime, pkg, logLevel, messageArray, context)
   const remoteLevel = (loggerOptions.remoteLevel && logLevelMapper(loggerOptions.remoteLevel)) || undefined
   const remoteLevelLogToRemote = remoteLevel ? logLevel.severity <= remoteLevel.severity : true
   const teamsLevel = (loggerOptions.teamsLevel && logLevelMapper(loggerOptions.teamsLevel)) || undefined
@@ -74,9 +74,10 @@ async function _loggerFactory (level, message, { formatDateTime, logLevelMapper,
   return shouldLogToRemote // This is only used for testing - the tests work exactly the same way for both logging to remote and to Teams, if you mess with one of them, you mess with both (the tests)!
 }
 
-function formatLogMessage (formatDateTime, pkg, logLevel, messageArray) {
+function formatLogMessage (formatDateTime, pkg, logLevel, messageArray, context) {
   const { fDate, fTime } = formatDateTime(new Date())
-  const funcDetails = pkg && pkg.version ? `${pkg.name} - ${pkg.version}: ` : ''
+  const invocationId = (context && context.log && context.invocationId) ? ` - ${context.invocationId}` : ''
+  const funcDetails = pkg && pkg.version ? `${pkg.name} - ${pkg.version}${invocationId}: ` : ''
   const logMessage = `${funcDetails}${messageArray.join(' - ')}`
 
   return {
