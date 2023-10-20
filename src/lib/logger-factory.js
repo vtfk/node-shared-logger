@@ -37,7 +37,8 @@ async function _loggerFactory (level, message, { formatDateTime, logLevelMapper,
   const teamsLevel = (loggerOptions.teamsLevel && logLevelMapper(loggerOptions.teamsLevel)) || undefined
   const remoteLevelLogToTeams = teamsLevel ? logLevel.severity <= teamsLevel.severity : true
 
-  localLog(loggerOptions, logLevel, messageFormats)
+  // Local logging (when no context override)
+  if (!(context && context.log)) localLog(loggerOptions, logLevel, messageFormats)
 
   // Remote logging
   const shouldLogToRemote = (loggerOptions.logToRemote && !(!inProduction && loggerOptions.onlyInProd) && remoteLevelLogToRemote) || false
@@ -62,7 +63,7 @@ async function _loggerFactory (level, message, { formatDateTime, logLevelMapper,
   // Azure context logging
   if (context && context.log) {
     try {
-      context.log[logLevel.azureLevel](messageFormats.logMessage)
+      context.log[logLevel.azureLevel](messageFormats.localLogMessage)
     } catch (error) {
       const warnLevel = logLevelMapper('warn')
       const errorMessage = formatLogMessage(formatDateTime, pkg, warnLevel, ['logger-factory', 'logToTeams', 'error', error.message])
