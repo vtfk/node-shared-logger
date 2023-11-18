@@ -1,6 +1,7 @@
 const matchers = require('jest-extended')
 const deepmerge = require('deepmerge')
 const logConfigFactory = require('../../src/lib/log-config-factory')
+const axios = require('axios')
 
 expect.extend(matchers)
 
@@ -8,7 +9,7 @@ jest.mock('axios')
 
 function createLogConfig (fakeDeps, options) {
   const mergedFakeDeps = {
-    axios: require('axios'),
+    axios,
     deepmerge,
     loggerOptions: {},
     envVariables: {},
