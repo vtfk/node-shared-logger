@@ -63,10 +63,16 @@ async function _loggerFactory (level, message, { formatDateTime, logLevelMapper,
   // Azure context logging
   if (context && context.log) {
     try {
-      context.log[logLevel.azureLevel](messageFormats.localLogMessage)
+      if (context.log[logLevel.azureLevel]) {
+        context.log[logLevel.azureLevel](messageFormats.localLogMessage)
+      } else if (context[logLevel.azureLevel]) {
+        context[logLevel.azureLevel](messageFormats.localLogMessage) // v4 of Azure Functions have moved logLevel directly onto context
+      } else {
+        throw new Error('Context object does not contain expected function for loglevel')
+      }
     } catch (error) {
       const warnLevel = logLevelMapper('warn')
-      const errorMessage = formatLogMessage(formatDateTime, pkg, warnLevel, ['logger-factory', 'logToTeams', 'error', error.message])
+      const errorMessage = formatLogMessage(formatDateTime, pkg, warnLevel, ['logger-factory', 'logToContext', 'error', error.message])
       localLog(loggerOptions, warnLevel, errorMessage)
     }
   }
