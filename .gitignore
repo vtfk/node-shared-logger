@@ -93,3 +93,6 @@ out
 .DS_Store
 
 kodd.js
+
+# ignore folder
+/ignore
