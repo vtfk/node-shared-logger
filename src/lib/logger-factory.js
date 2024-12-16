@@ -53,7 +53,7 @@ async function _loggerFactory (level, message, { formatDateTime, logLevelMapper,
   // Teams logging
   const shouldLogToTeams = (loggerOptions.logToTeams && !(!inProduction && loggerOptions.onlyTeamsInProd) && remoteLevelLogToTeams) || false
   try {
-    if (shouldLogToTeams) await loggerOptions.teamsLogger.log(messageFormats.teamsAdaptiveCard)
+    if (shouldLogToTeams) await loggerOptions.teamsLogger.log({ messageCard: messageFormats.teamsMessageCard, adaptiveCard: messageFormats.teamsAdaptiveCard })
   } catch (error) {
     const warnLevel = logLevelMapper('warn')
     const errorMessage = formatLogMessage(formatDateTime, pkg, warnLevel, ['logger-factory', 'logToTeams', 'error', error.message])
@@ -90,11 +90,12 @@ function formatLogMessage (formatDateTime, pkg, logLevel, messageArray, context)
     logMessage,
     remoteLogMessage: `${logLevel.level} - ${logMessage}`,
     localLogMessage: `[ ${fDate} ${fTime} ] < ${logLevel.level} >${logLevel.padding} ${logMessage}`,
+    teamsMessageCard: formatMessageCard(logLevel, `${logLevel.level} - ${funcDetails}`, messageArray),
     teamsAdaptiveCard: formatAdaptiveCard(logLevel, `${logLevel.level} - ${funcDetails}`, messageArray)
   }
 }
 
-function formatAdaptiveCard (logLevel, title, messageArray) {
+function formatMessageCard (logLevel, title, messageArray) {
   return {
     '@type': 'MessageCard',
     '@context': 'https://schema.org/extensions',
@@ -106,6 +107,35 @@ function formatAdaptiveCard (logLevel, title, messageArray) {
         facts: messageArray.map(msg => {
           return { name: 'Msg:', value: msg }
         })
+      }
+    ]
+  }
+}
+
+function formatAdaptiveCard (logLevel, title, messageArray) {
+  return {
+    type: 'message',
+    attachments: [
+      {
+        contentType: 'application/vnd.microsoft.card.adaptive',
+        contentUrl: null,
+        content: {
+          $schema: 'http://adaptivecards.io/schemas/adaptive-card.json',
+          type: 'AdaptiveCard',
+          version: '1.5',
+          msteams: { width: 'full' },
+          body: [
+            {
+              type: 'TextBlock',
+              text: title,
+              color: logLevel.adaptiveCardColor,
+              weight: 'bolder',
+              size: 'Large',
+              wrap: true
+            },
+            ...(messageArray.map(msg => { return { type: 'TextBlock', text: `• ${msg}`, wrap: true } }))
+          ]
+        }
       }
     ]
   }

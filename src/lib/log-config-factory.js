@@ -40,8 +40,11 @@ function _logConfigFactory (options = {}, { axios, deepmerge, loggerOptions, env
     if (options.teams && typeof options.teams === 'object') {
       options.teams.url = options.teams.url || envVariables.TEAMS_WEBHOOK_URL
 
-      loggerOptions.teamsLogger = {
-        log: async adaptiveCard => await axios.post(options.teams.url, adaptiveCard) // CREATE ADAPTIVE CARD BEFORE POSTING
+      loggerOptions.teamsLogger = {}
+      if (options.teams.url.includes('webhook.office.com')) { // Gamlemåten Office webhooks
+        loggerOptions.teamsLogger.log = async cards => await axios.post(options.teams.url, cards.messageCard)
+      } else { // Power Automate måten
+        loggerOptions.teamsLogger.log = async cards => await axios.post(options.teams.url, cards.adaptiveCard) // Format adaptive card to match Power Automate format
       }
 
       // onlyTeamsInProd defaults to true
