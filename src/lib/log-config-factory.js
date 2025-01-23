@@ -41,10 +41,14 @@ function _logConfigFactory (options = {}, { axios, deepmerge, loggerOptions, env
       options.teams.url = options.teams.url || envVariables.TEAMS_WEBHOOK_URL
 
       loggerOptions.teamsLogger = {}
-      if (options.teams.url.includes('webhook.office.com')) { // Gamlemåten Office webhooks
-        loggerOptions.teamsLogger.log = async cards => await axios.post(options.teams.url, cards.messageCard)
-      } else { // Power Automate måten
-        loggerOptions.teamsLogger.log = async cards => await axios.post(options.teams.url, cards.adaptiveCard) // Format adaptive card to match Power Automate format
+      if (options.teams.url && typeof options.teams.url === 'string') {
+        if (options.teams.url.includes('webhook.office.com')) { // Gamlemåten Office webhooks
+          loggerOptions.teamsLogger.log = async cards => await axios.post(options.teams.url, cards.messageCard)
+        } else { // Power Automate måten
+          loggerOptions.teamsLogger.log = async cards => await axios.post(options.teams.url, cards.adaptiveCard) // Format adaptive card to match Power Automate format
+        }
+      } else {
+        loggerOptions.teamsLogger.log = async cards => console.log('No teams URL provided, teams logging disabled')
       }
 
       // onlyTeamsInProd defaults to true
