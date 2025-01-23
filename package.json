@@ -16,7 +16,10 @@
   "engines": {
     "node": ">=10"
   },
-  "repository": "github:vtfk/node-shared-logger",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vtfk/node-shared-logger.git"
+  },
   "bugs": "https://github.com/vtfk/node-shared-logger/issues",
   "homepage": "https://github.com/vtfk/node-shared-logger#readme",
   "author": "Ingar Helgesen (https://github.com/sherex)",
