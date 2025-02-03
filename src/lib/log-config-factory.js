@@ -1,5 +1,7 @@
 const { Logtail } = require('@logtail/node')
 
+let logtail = null
+
 function _logConfigFactory (options = {}, { axios, deepmerge, loggerOptions, envVariables }) {
   options = deepmerge(loggerOptions.previousOptions, options)
   loggerOptions.previousOptions = options
@@ -50,9 +52,11 @@ function _logConfigFactory (options = {}, { axios, deepmerge, loggerOptions, env
       options.betterstack.url = options.betterstack.url || envVariables.BETTERSTACK_URL
       options.betterstack.token = options.betterstack.token || envVariables.BETTERSTACK_TOKEN
 
-      const logtail = new Logtail(options.betterstack.token, {
-        endpoint: options.betterstack.url
-      })
+      if (!logtail) { // Only create one instance of Logtail
+        logtail = new Logtail(options.betterstack.token, {
+          endpoint: options.betterstack.url
+        })
+      }
 
       loggerOptions.betterstackLogger = {
         log: async (level, msg) => {
