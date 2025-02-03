@@ -55,7 +55,7 @@ async function _loggerFactory (level, message, { formatDateTime, logLevelMapper,
   // Betterstack logging
   const shouldLogToBetterstack = (loggerOptions.logToBetterstack && !(!inProduction && loggerOptions.onlyInProd) && betterstackLevelLogToBetterstack) || false
   try {
-    if (shouldLogToBetterstack) await loggerOptions.betterstackLogger.log(messageFormats.betterstackLogMessage)
+    if (shouldLogToBetterstack) await loggerOptions.betterstackLogger.log(logLevel.level.toLowerCase(), messageFormats.betterstackLogMessage)
   } catch (error) {
     const warnLevel = logLevelMapper('warn')
     const errorMessage = formatLogMessage(formatDateTime, pkg, warnLevel, ['logger-factory', 'logToBetterstack', 'error', error.message])
@@ -101,7 +101,7 @@ function formatLogMessage (formatDateTime, pkg, logLevel, messageArray, context)
   return {
     logMessage,
     remoteLogMessage: `${logLevel.level} - ${logMessage}`,
-    betterstackLogMessage: `${logLevel.level} - ${logMessage}`,
+    betterstackLogMessage: logMessage, // Betterstack package will add level and timestamp
     localLogMessage: `[ ${fDate} ${fTime} ] < ${logLevel.level} >${logLevel.padding} ${logMessage}`,
     teamsMessageCard: formatMessageCard(logLevel, `${logLevel.level} - ${funcDetails}`, messageArray),
     teamsAdaptiveCard: formatAdaptiveCard(logLevel, `${logLevel.level} - ${funcDetails}`, messageArray)

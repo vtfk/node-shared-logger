@@ -1,3 +1,5 @@
+const { Logtail } = require('@logtail/node')
+
 function _logConfigFactory (options = {}, { axios, deepmerge, loggerOptions, envVariables }) {
   options = deepmerge(loggerOptions.previousOptions, options)
   loggerOptions.previousOptions = options
@@ -48,8 +50,12 @@ function _logConfigFactory (options = {}, { axios, deepmerge, loggerOptions, env
       options.betterstack.url = options.betterstack.url || envVariables.BETTERSTACK_URL
       options.betterstack.token = options.betterstack.token || envVariables.BETTERSTACK_TOKEN
 
+      const logtail = new Logtail(options.betterstack.token, {
+        endpoint: options.betterstack.url
+      })
+
       loggerOptions.betterstackLogger = {
-        log: async msg => {
+        log: async (level, msg) => {
           const betterstackUrl = new URL(options.betterstack.url)
           if (!betterstackUrl.hostname.endsWith('betterstackdata.com')) {
             throw new Error('Invalid Betterstack URL, must end with betterstackdata.com')
@@ -57,7 +63,8 @@ function _logConfigFactory (options = {}, { axios, deepmerge, loggerOptions, env
           if (!betterstackUrl.protocol === 'https:') {
             throw new Error('Invalid Betterstack URL, must use HTTPS')
           }
-          await axios.post(options.betterstack.url, msg, { headers: { Authorization: `Bearer ${options.betterstack.token}` } })
+          if (['silly', 'verbose'].includes(level)) level = 'debug' // Betterstack does not support silly level
+          logtail[level](msg) // Log to Betterstack with package to get batching and retry logic, and colors! (må vi ha await??)
         }
       }
 
