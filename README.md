@@ -24,6 +24,8 @@ All options are optional.
 
 Logging to papertrail can be configured in `logConfig()` or as env variables.
 
+Logging to BetterStack can be configured in `logConfig()` or as env variables.
+
 Logging to Microsoft Teams can be configured in `logConfig()` or as env variable **TEAMS_WEBHOOK_URL**.
 
 Azure Function logging can be configured in `logConfig()`.
@@ -39,6 +41,13 @@ const options = {
     host: '',                   // Host for the remote aggregator
     token: '',                  // Token for the remote aggregator
     level: ''                   // Lowest level for log to remote. If not set, all levels will log to remote
+  },
+  betterstack: {                // Options for betterstack logging.
+    disabled: false,            // If true; disables logging to betterstack, even if betterstack config is set
+    onlyInProd: true,           // If true; only log to betterstack aggregator when NODE_ENV === 'production' (default is true)
+    url: '',                    // Url for the betterstack aggregator
+    token: '',                  // Token for the betterstack aggregator
+    level: ''                   // Lowest level for log to betterstack. If not set, all levels will log to betterstack
   },
   teams: {                      // Options for Microsoft Teams logging with webhook.
     disabled: false,            // If true; disables logging to Microsoft Teams, even if teams config is set
@@ -67,11 +76,13 @@ logConfig(options)
 NODE_ENV=production
 PAPERTRAIL_HOST = papertrail.example.com/v1/log
 PAPERTRAIL_TOKEN = jvkuvuyoufyofo8ygo8f609fo7ouyvcio7=
+BETTERSTACK_URL = https://hiufjdsiofjods.betterstackdata.com
+BETTERSTACK_TOKEN = jvkuvuyoufyofo8ygo8f609fdsiufids
 TEAMS_WEBHOOK_URL = https://<tenant>.webhook.office.com/blablabla
 ```
 `logConfig()` options take priority.
 
-[How to get Microsoft Teams Webhook URL](https://docs.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook)
+[How to get Microsoft Teams Webhook URL (Workflows)](https://support.microsoft.com/en-us/office/create-incoming-webhooks-with-workflows-for-microsoft-teams-8ae491c7-0394-4861-ba59-055e33f75498)
 
 
 ### Examples
@@ -165,6 +176,11 @@ logConfig({
     onlyInProd: true,
     host: 'papertrail.example.com/v1/log',
     token: 'jvkuvuyoufyofo8ygo8f609fo7ouyvcio7='
+  },
+  betterstack: {
+    onlyInProd: true,
+    url: 'https://logloglog.bettestackdata.com',
+    token: 'tpokeneinieni'
   },
   teams: {
     url: 'https://<tenant>.webhook.office.com/blablabla'
