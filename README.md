@@ -179,7 +179,7 @@ logConfig({
   },
   betterstack: {
     onlyInProd: true,
-    url: 'https://logloglog.bettestackdata.com',
+    url: 'https://logloglog.betterstackdata.com',
     token: 'tpokeneinieni'
   },
   teams: {
