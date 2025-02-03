@@ -50,8 +50,6 @@ function _logConfigFactory (options = {}, { axios, deepmerge, loggerOptions, env
 
       loggerOptions.betterstackLogger = {
         log: async msg => {
-          console.log('vi skal logge til betterstack')
-          console.log(options.betterstack.url)
           const betterstackUrl = new URL(options.betterstack.url)
           if (!betterstackUrl.hostname.endsWith('betterstackdata.com')) {
             throw new Error('Invalid Betterstack URL, must end with betterstackdata.com')
