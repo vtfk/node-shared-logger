@@ -12,6 +12,12 @@ function _logConfigFactory (options = {}, { axios, deepmerge, loggerOptions, env
       url: envVariables.TEAMS_WEBHOOK_URL
     }
   }
+  if ((!options || !options.betterstack) && envVariables.BETTERSTACK_URL && envVariables.BETTERSTACK_TOKEN) {
+    options.betterstack = {
+      url: envVariables.BETTERSTACK_URL,
+      token: envVariables.BETTERSTACK_TOKEN
+    }
+  }
   if (options && typeof options === 'object') {
     // remote logging
     if (options.remote && typeof options.remote === 'object') {
@@ -34,6 +40,41 @@ function _logConfigFactory (options = {}, { axios, deepmerge, loggerOptions, env
       // set remote level (lowest level for remote logging)
       if (options.remote.level) {
         loggerOptions.remoteLevel = options.remote.level
+      }
+    }
+
+    // Betterstack logging
+    if (options.betterstack && typeof options.betterstack === 'object') {
+      options.betterstack.url = options.betterstack.url || envVariables.BETTERSTACK_URL
+      options.betterstack.token = options.betterstack.token || envVariables.BETTERSTACK_TOKEN
+
+      loggerOptions.betterstackLogger = {
+        log: async msg => {
+          console.log('vi skal logge til betterstack')
+          console.log(options.betterstack.url)
+          const betterstackUrl = new URL(options.betterstack.url)
+          if (!betterstackUrl.hostname.endsWith('betterstackdata.com')) {
+            throw new Error('Invalid Betterstack URL, must end with betterstackdata.com')
+          }
+          if (!betterstackUrl.protocol === 'https:') {
+            throw new Error('Invalid Betterstack URL, must use HTTPS')
+          }
+          await axios.post(options.betterstack.url, msg, { headers: { Authorization: `Bearer ${options.betterstack.token}` } })
+        }
+      }
+
+      // onlyInProd defaults to true
+      loggerOptions.onlyInProd = options.betterstack.onlyInProd === undefined ? true : options.betterstack.onlyInProd
+      options.betterstack.onlyInProd = loggerOptions.onlyInProd
+
+      // enables betterstack logging if everything checks out, otherwise betterstack logging will be disabled
+      loggerOptions.logToBetterstack = !options.betterstack.disabled &&
+        typeof options.betterstack.url === 'string' &&
+        typeof options.betterstack.token === 'string'
+
+      // set betterstack level (lowest level for betterstack logging)
+      if (options.betterstack.level) {
+        loggerOptions.betterstackLevel = options.betterstack.level
       }
     }
     // Teams logging

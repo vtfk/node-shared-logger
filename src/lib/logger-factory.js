@@ -34,6 +34,8 @@ async function _loggerFactory (level, message, { formatDateTime, logLevelMapper,
   const messageFormats = formatLogMessage(formatDateTime, pkg, logLevel, messageArray, context)
   const remoteLevel = (loggerOptions.remoteLevel && logLevelMapper(loggerOptions.remoteLevel)) || undefined
   const remoteLevelLogToRemote = remoteLevel ? logLevel.severity <= remoteLevel.severity : true
+  const betterstackLevel = (loggerOptions.betterstackLevel && logLevelMapper(loggerOptions.betterstackLevel)) || undefined
+  const betterstackLevelLogToBetterstack = betterstackLevel ? logLevel.severity <= betterstackLevel.severity : true
   const teamsLevel = (loggerOptions.teamsLevel && logLevelMapper(loggerOptions.teamsLevel)) || undefined
   const remoteLevelLogToTeams = teamsLevel ? logLevel.severity <= teamsLevel.severity : true
 
@@ -47,6 +49,16 @@ async function _loggerFactory (level, message, { formatDateTime, logLevelMapper,
   } catch (error) {
     const warnLevel = logLevelMapper('warn')
     const errorMessage = formatLogMessage(formatDateTime, pkg, warnLevel, ['logger-factory', 'logToRemote', 'error', error.message])
+    localLog(loggerOptions, warnLevel, errorMessage)
+  }
+
+  // Betterstack logging
+  const shouldLogToBetterstack = (loggerOptions.logToBetterstack && !(!inProduction && loggerOptions.onlyInProd) && betterstackLevelLogToBetterstack) || false
+  try {
+    if (shouldLogToBetterstack) await loggerOptions.betterstackLogger.log(messageFormats.betterstackLogMessage)
+  } catch (error) {
+    const warnLevel = logLevelMapper('warn')
+    const errorMessage = formatLogMessage(formatDateTime, pkg, warnLevel, ['logger-factory', 'logToBetterstack', 'error', error.message])
     localLog(loggerOptions, warnLevel, errorMessage)
   }
 
@@ -89,6 +101,7 @@ function formatLogMessage (formatDateTime, pkg, logLevel, messageArray, context)
   return {
     logMessage,
     remoteLogMessage: `${logLevel.level} - ${logMessage}`,
+    betterstackLogMessage: `${logLevel.level} - ${logMessage}`,
     localLogMessage: `[ ${fDate} ${fTime} ] < ${logLevel.level} >${logLevel.padding} ${logMessage}`,
     teamsMessageCard: formatMessageCard(logLevel, `${logLevel.level} - ${funcDetails}`, messageArray),
     teamsAdaptiveCard: formatAdaptiveCard(logLevel, `${logLevel.level} - ${funcDetails}`, messageArray)

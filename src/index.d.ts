@@ -18,6 +18,13 @@ interface LogConfigOptions {
     token?: string
     level?: Levels
   }
+  betterstack?: {
+    disabled?: boolean
+    onlyInProd?: boolean
+    host?: string
+    token?: string
+    level?: Levels
+  }
   teams?: {
     disabled?: boolean
     onlyInProd?: boolean
