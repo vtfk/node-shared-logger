@@ -35,7 +35,7 @@
     "@logtail/node": "^0.5.2",
     "axios": "^1.7.4",
     "deepmerge": "^4.2.2",
-    "pkg-dir": "5.0.0"
+    "pkg-dir": "7.0.0"
   },
   "devDependencies": {
     "jest": "27.5.1",
