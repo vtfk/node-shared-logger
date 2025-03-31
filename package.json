@@ -33,7 +33,7 @@
   "license": "MIT",
   "dependencies": {
     "@logtail/node": "^0.5.2",
-    "axios": "^1.7.4",
+    "axios": "^1.8.4",
     "deepmerge": "^4.2.2",
     "pkg-dir": "5.0.0"
   },
