@@ -17,7 +17,7 @@
 ## Usage
 
 > [!IMPORTANT]  
-> Version 5.x.x and above requires Nodejs 16 or higher
+> Version 5.x.x and above requires Node.js 16 or higher
 
 ## Config
 All options are optional.
@@ -53,7 +53,8 @@ const options = {
     disabled: false,            // If true; disables logging to Microsoft Teams, even if teams config is set
     onlyInProd: true,           // If true; only log to Microsoft Teams when NODE_ENV === 'production' (default is true)
     url: '',                    // Microsoft Teams channel webhook url
-    level: ''                   // Lowest level for log to Microsoft Teams. If not set, all levels will log to Microsoft Teams
+    level: '',                  // Lowest level for log to Microsoft Teams. If not set, all levels will log to Microsoft Teams
+    skipRepo: false             // If true; do not include repo name/url in message. (default is false)
   },
   azure: {                      // Options for Azure
     context: context,           // The context object received from an Azure Function (see example further down)
