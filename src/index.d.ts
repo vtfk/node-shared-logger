@@ -29,7 +29,8 @@ interface LogConfigOptions {
     disabled?: boolean
     onlyInProd?: boolean
     url?: string
-    level?: Levels
+    level?: Levels,
+    skipRepo?: boolean
   }
   azure?: {
     context?: {

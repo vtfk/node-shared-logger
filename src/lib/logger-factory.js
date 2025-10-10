@@ -31,7 +31,7 @@ async function _loggerFactory (level, message, { formatDateTime, logLevelMapper,
   }
 
   messageArray = messageArray.map(msg => getMessage(msg, loggerOptions.error.property))
-  const messageFormats = formatLogMessage(formatDateTime, pkg, logLevel, messageArray, context)
+  const messageFormats = formatLogMessage(formatDateTime, pkg, logLevel, messageArray, context, loggerOptions)
   const remoteLevel = (loggerOptions.remoteLevel && logLevelMapper(loggerOptions.remoteLevel)) || undefined
   const remoteLevelLogToRemote = remoteLevel ? logLevel.severity <= remoteLevel.severity : true
   const betterstackLevel = (loggerOptions.betterstackLevel && logLevelMapper(loggerOptions.betterstackLevel)) || undefined
@@ -92,24 +92,27 @@ async function _loggerFactory (level, message, { formatDateTime, logLevelMapper,
   return shouldLogToRemote // This is only used for testing - the tests work exactly the same way for both logging to remote and to Teams, if you mess with one of them, you mess with both (the tests)!
 }
 
-function formatLogMessage (formatDateTime, pkg, logLevel, messageArray, context) {
+function formatLogMessage (formatDateTime, pkg, logLevel, messageArray, context, loggerOptions = {}) {
   const { fDate, fTime } = formatDateTime(new Date())
   const invocationId = (context && context.log && context.invocationId) ? ` - ${context.invocationId}` : ''
   const funcDetails = pkg && pkg.version ? `${pkg.name} - ${pkg.version}${invocationId}: ` : ''
   const logMessage = `${funcDetails}${messageArray.join(' - ')}`
+  const teamsRepoString = (loggerOptions.teamsSkipRepo === undefined || loggerOptions.teamsSkipRepo !== true) && pkg && pkg.repository
+    ? (pkg.repository.url || pkg.repository).replace('git+', '').replace('.git', '')
+    : null
 
   return {
     logMessage,
     remoteLogMessage: `${logLevel.level} - ${logMessage}`,
     betterstackLogMessage: logMessage, // Betterstack package will add level and timestamp
     localLogMessage: `[ ${fDate} ${fTime} ] < ${logLevel.level} >${logLevel.padding} ${logMessage}`,
-    teamsMessageCard: formatMessageCard(logLevel, `${logLevel.level} - ${funcDetails}`, messageArray),
-    teamsAdaptiveCard: formatAdaptiveCard(logLevel, `${logLevel.level} - ${funcDetails}`, messageArray)
+    teamsMessageCard: formatMessageCard(logLevel, `${logLevel.level} - ${funcDetails}`, messageArray, teamsRepoString),
+    teamsAdaptiveCard: formatAdaptiveCard(logLevel, `${logLevel.level} - ${funcDetails}`, messageArray, teamsRepoString)
   }
 }
 
-function formatMessageCard (logLevel, title, messageArray) {
-  return {
+function formatMessageCard (logLevel, title, messageArray, repoString) {
+  const messageCard = {
     '@type': 'MessageCard',
     '@context': 'https://schema.org/extensions',
     summary: title,
@@ -123,10 +126,33 @@ function formatMessageCard (logLevel, title, messageArray) {
       }
     ]
   }
+
+  if (repoString) {
+    if (new RegExp("^https://").test(repoString)) {
+      messageCard.potentialAction = [
+        {
+          '@type': 'OpenUri',
+          name: 'Repository',
+          targets: [
+            {
+              os: 'default',
+              uri: repoString
+            }
+          ]
+        }
+      ]
+
+      return messageCard
+    }
+
+    messageCard.sections[0].facts.push({name: 'Repository:', value: repoString})
+  }
+
+  return messageCard
 }
 
-function formatAdaptiveCard (logLevel, title, messageArray) {
-  return {
+function formatAdaptiveCard (logLevel, title, messageArray, repoString) {
+  const adaptiveCard = {
     type: 'message',
     attachments: [
       {
@@ -152,6 +178,31 @@ function formatAdaptiveCard (logLevel, title, messageArray) {
       }
     ]
   }
+
+  if (repoString) {
+    if (new RegExp("^https://").test(repoString)) {
+      adaptiveCard.attachments[0].content.body.push({
+        type: 'ActionSet',
+        actions: [
+          {
+            type: 'Action.OpenUrl',
+            title: 'Repository',
+            url: repoString
+          }
+        ]
+      })
+
+      return adaptiveCard
+    }
+
+    adaptiveCard.attachments[0].content.body.push({
+      type: 'TextBlock',
+      text: `Repository: ${repoString}`,
+      wrap: true
+    })
+  }
+
+  return adaptiveCard
 }
 
 function localLog (loggerOptions, logLevel, messageFormats) {

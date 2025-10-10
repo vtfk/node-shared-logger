@@ -44,6 +44,7 @@ const loggerDeps = {
  * @param {string}    [options.teams.url]                 URL to teams webhook
  * @param {string}    [options.teams.level]               Lowest level for log to teams. If not set, defaults to WARN
  * @param {boolean}   [options.teams.disabled]            Disable teams logging
+ * @param {boolean}   [options.teams.skipRepo]            Do not log repository value from package.json, defaults to false
  * @param {string}    [options.prefix]                    A string that will be added in front of each log message (ex. UID for each run)
  * @param {string}    [options.suffix]                    A string that will be added at the end of each log message
  * @param {string}    [options.error.useMessage]          Use message property on error objects. If undefined; stack property will be used

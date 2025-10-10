@@ -86,6 +86,7 @@ function _logConfigFactory (options = {}, { axios, deepmerge, loggerOptions, env
         loggerOptions.betterstackLevel = options.betterstack.level
       }
     }
+
     // Teams logging
     if (options.teams && typeof options.teams === 'object') {
       options.teams.url = options.teams.url || envVariables.TEAMS_WEBHOOK_URL
@@ -107,6 +108,8 @@ function _logConfigFactory (options = {}, { axios, deepmerge, loggerOptions, env
 
       // enables teams logging if everything checks out, otherwise teams logging will be disabled
       loggerOptions.logToTeams = !options.teams.disabled && typeof options.teams.url === 'string'
+
+      loggerOptions.teamsSkipRepo = options.teams.skipRepo === true
 
       // set teams level (lowest level for teams logging)
       loggerOptions.teamsLevel = options.teams.level || 'warn' // Default log level for Teams is set to WARN

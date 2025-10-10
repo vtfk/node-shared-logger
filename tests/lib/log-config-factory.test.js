@@ -304,6 +304,28 @@ describe('Checking client creation', () => {
     expect(fakeDeps.loggerOptions.suffix).toBe('cats')
     expect(fakeDeps.loggerOptions.remoteLogger).not.toBeUndefined()
   })
+
+  it('supports skipRepo before and after initial config is set', () => {
+    const { fakeDeps, logConfig } = createLogConfig({}, {
+      teams: {
+        skipRepo: true
+      }
+    })
+    expect(fakeDeps.loggerOptions.teamsSkipRepo).toBeTruthy()
+
+    logConfig({
+      teams: {
+        skipRepo: false
+      }
+    })
+    expect(fakeDeps.loggerOptions.teamsSkipRepo).toBeFalsy()
+  })
+
+  it('supports skipRepo to not be set at all', () => {
+    const { fakeDeps } = createLogConfig({}, {
+    })
+    expect(fakeDeps.loggerOptions.teamsSkipRepo).toBeFalsy()
+  })
 })
 
 function createAzureMock (id = '02sd1514-c4dc-4c3a-ae9f-0066bb1da3a4', includeLoggers = ['error', 'warn', 'info', 'verbose']) {
