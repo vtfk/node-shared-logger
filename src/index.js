@@ -1,4 +1,4 @@
-const axios = require('axios').default
+const axios = require('axios')
 const deepmerge = require('deepmerge')
 const logLevelMapper = require('./lib/log-level-mapper')
 const formatDateTime = require('./lib/format-date-time')
@@ -33,7 +33,7 @@ const loggerDeps = {
  * Logger configuration
  * @description Configure the logger and add message suffix/prefix
  * @param {object}    [options]                           Options for logging
- * @param {object}    [options.remote]                    Options for remote logging. If undefined and PAPERTRAIL_HOST/PAPERTRAIL_TOKEN is not set in env; disables remote logging
+ * @param {object}    [options.remote]                    Options for remote logging. If undefined and BETTERSTACK_URL/BETTERSTACK_TOKEN or PAPERTRAIL_HOST/PAPERTRAIL_TOKEN is not set in env; disables remote logging
  * @param {boolean}   [options.remote.onlyInProd=true]    If true; only log to remote aggregator when NODE_ENV === 'production'
  * @param {string}    [options.remote.host]               Host for the remote aggregator
  * @param {string}    [options.remote.token]              Token for the remote aggregator

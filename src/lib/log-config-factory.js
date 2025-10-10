@@ -64,7 +64,7 @@ function _logConfigFactory (options = {}, { axios, deepmerge, loggerOptions, env
           if (!betterstackUrl.hostname.endsWith('betterstackdata.com')) {
             throw new Error('Invalid Betterstack URL, must end with betterstackdata.com')
           }
-          if (!betterstackUrl.protocol === 'https:') {
+          if (betterstackUrl.protocol !== 'https:') {
             throw new Error('Invalid Betterstack URL, must use HTTPS')
           }
           if (['silly', 'verbose'].includes(level)) level = 'debug' // Betterstack does not support silly level

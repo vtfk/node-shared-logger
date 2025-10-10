@@ -50,7 +50,7 @@ describe('Testing returned functions', () => {
     index = require('../src/index')
   })
 
-  it('does not log to remote if NODE_ENV !== produciton', async () => {
+  it('does not log to remote if NODE_ENV !== production', async () => {
     const oldEnvs = process.env
     process.env = {
       ...process.env,

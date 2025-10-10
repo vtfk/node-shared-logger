@@ -5,7 +5,7 @@ const logLevelMapper = require('../../src/lib/log-level-mapper')
 expect.extend(matchers)
 
 function matchLogMessage (message) {
-  const logMessageMatcher = /^\[ (?<dateTime>\d{1,2}.\d{1,2}.\d{4} \d{2}:\d{2}:\d{2}) \] < (?<level>\w{1,10}) > ([^:]*: |)(?<message>.*$)/
+  const logMessageMatcher = /^\[ (?<dateTime>\d{1,2}.\d{1,2}.\d{4} \d{2}:\d{2}:\d{2}) ] < (?<level>\w{1,10}) > ([^:]*: |)(?<message>.*$)/
   const match = message.match(logMessageMatcher)
   if (match === null) return null
   return {
@@ -29,7 +29,7 @@ function createLogger (fakeDeps) {
     ...fakeDeps
   }
   return {
-    logger: async (level, message) => loggerFactory(level, message, mergedFakeDeps),
+    logger: async (level, message) => loggerFactory(level, message, mergedFakeDeps, {}),
     mergedFakeDeps
   }
 }
@@ -113,9 +113,9 @@ describe('Remote severity testing', () => {
       logLevelMapper
     })
     await expect(() => logger('unknown', 'msg'))
-      .resolved
+      .resolves.toBeFalsy()
     await expect(() => logger())
-      .resolved
+      .resolves.toBeFalsy()
   })
 })
 
@@ -490,7 +490,7 @@ describe('Checking logging with Azure context', () => {
 })
 
 describe('Error handling', () => {
-  it('catches errors from the remoteLogger function and logges it locally', async () => {
+  it('catches errors from the remoteLogger function and logs it locally', async () => {
     const { logger, mergedFakeDeps } = createLogger({
       loggerOptions: {
         localLogger: jest.fn((message) => {}),
@@ -503,7 +503,7 @@ describe('Error handling', () => {
     })
 
     await expect(() => logger('info', ['array', 123]))
-      .resolved
+      .resolves.toBeTruthy()
 
     const remoteLogger = mergedFakeDeps.loggerOptions.remoteLogger
     await expect(() => remoteLogger.log())

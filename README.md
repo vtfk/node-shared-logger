@@ -7,7 +7,7 @@
 </div>
 
 <br>
-<p align=center >A simple logger for node applications. Logs to console, papertrail (via token) and Azure Function.</p>
+<p align=center >A simple logger for node applications. Logs to console, Papertrail (via token) and/or Betterstack (via token) and Azure Function.</p>
 <br>
 
 ## Installation
@@ -22,7 +22,7 @@
 ## Config
 All options are optional.
 
-Logging to papertrail can be configured in `logConfig()` or as env variables.
+Logging to Papertrail can be configured in `logConfig()` or as env variables.
 
 Logging to BetterStack can be configured in `logConfig()` or as env variables.
 
