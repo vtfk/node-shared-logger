@@ -128,7 +128,7 @@ function formatMessageCard (logLevel, title, messageArray, repoString) {
   }
 
   if (repoString) {
-    if (new RegExp("^https://").test(repoString)) {
+    if (/^https:\/\//.test(repoString)) {
       messageCard.potentialAction = [
         {
           '@type': 'OpenUri',
@@ -145,7 +145,7 @@ function formatMessageCard (logLevel, title, messageArray, repoString) {
       return messageCard
     }
 
-    messageCard.sections[0].facts.push({name: 'Repository:', value: repoString})
+    messageCard.sections[0].facts.push({ name: 'Repository:', value: repoString })
   }
 
   return messageCard
@@ -180,7 +180,7 @@ function formatAdaptiveCard (logLevel, title, messageArray, repoString) {
   }
 
   if (repoString) {
-    if (new RegExp("^https://").test(repoString)) {
+    if (/^https:\/\//.test(repoString)) {
       adaptiveCard.attachments[0].content.body.push({
         type: 'ActionSet',
         actions: [
